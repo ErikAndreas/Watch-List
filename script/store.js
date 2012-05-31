@@ -15,7 +15,7 @@ var LocalStoreAdaptor = {
 	}
 };
 
-// RemoteStorage
+// RemoteStorage 
 // depends on remoteStorage.js and uses localStorage
 var RS = {
 	category:'music',
