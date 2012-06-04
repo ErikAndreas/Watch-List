@@ -73,6 +73,7 @@ var UI = {
 		});
 		$('#loginBtn').bind("click", function (e) {
 			localStorage.setItem('RS.userAddress',$('#email').val());
+			$('#loginMsg').html('');
 			$('#loginC').hide('fast');
 			RS.connect();
 			return false;

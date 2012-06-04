@@ -25,7 +25,13 @@ var RS = {
 	connect:function() {
 		RS.userAddress = localStorage.getItem('RS.userAddress');
 		remoteStorage.getStorageInfo(RS.userAddress, function(err, storageInfo) {
-			window.location = remoteStorage.createOAuthAddress(storageInfo, [RS.category], window.location.href);
+			if (!err) {
+				window.location = remoteStorage.createOAuthAddress(storageInfo, [RS.category], window.location.href);
+			} else {
+				$('#loginC').show('fast');
+				$('#loginMsg').html('Login failed, try again ('+err+')').show();
+				console.log(err);
+			}
 		});
 	},
 	getItem:function(key, callback) {
