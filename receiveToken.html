@@ -1,0 +1,6 @@
+<script type="text/javascript" src="script/remoteStorage.js"></script>
+<script>
+var token = remoteStorage.receiveToken();
+window.opener.postMessage(token, location.protocol+'//'+location.host);
+window.close();
+</script>
