@@ -34,6 +34,7 @@ var RS = {
 				//var popup = window.open(oauthPage);
 				popup.location.href = oauthPage;
 			} else {
+				popup.close();
 				$('#loginC').show('fast');
 				$('#loginMsg').html('Login failed, try again ('+err+')').show();
 				console.log(err);
