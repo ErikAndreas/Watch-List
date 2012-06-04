@@ -24,9 +24,15 @@ var RS = {
 	isConnected:false,
 	connect:function() {
 		RS.userAddress = localStorage.getItem('RS.userAddress');
+		var popup = window.open('');
 		remoteStorage.getStorageInfo(RS.userAddress, function(err, storageInfo) {
 			if (!err) {
-				window.location = remoteStorage.createOAuthAddress(storageInfo, [RS.category], window.location.href);
+				//window.location = remoteStorage.createOAuthAddress(storageInfo, [RS.category], window.location.href);
+				var redirectUri = location.protocol + '//' + location.host + location.pathname + '/receiveToken.html';
+				console.log('will open ' + redirectUri + ' for oauth dance');
+				var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [RS.category], redirectUri);
+				//var popup = window.open(oauthPage);
+				popup.location.href = oauthPage;
 			} else {
 				$('#loginC').show('fast');
 				$('#loginMsg').html('Login failed, try again ('+err+')').show();

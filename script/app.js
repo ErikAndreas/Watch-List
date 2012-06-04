@@ -76,12 +76,12 @@ var App = {
 		// bind UI components
 		UI.bind();
 		// check for token passed from remoteStorage login callback
-		if (null != remoteStorage.receiveToken()) {
+		/*if (null != remoteStorage.receiveToken()) {
 			var token = remoteStorage.receiveToken();
 			localStorage.setItem('RS.token',token);
 			RS.token = token;
 			RS.isConnected = true;
-		}
+		}*/
 		// check localStorage for saved remoteStorage token
 		if (null != localStorage.getItem('RS.token')) {
 			RS.token = localStorage.getItem('RS.token');
