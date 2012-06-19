@@ -30,7 +30,7 @@ var RS = {
 				//window.location = remoteStorage.createOAuthAddress(storageInfo, [RS.category], window.location.href);
 				var redirectUri = location.protocol + '//' + location.host + location.pathname + '/receiveToken.html';
 				console.log('will open ' + redirectUri + ' for oauth dance');
-				var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [RS.category], redirectUri);
+				var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [RS.category+':rw'], redirectUri);
 				//var popup = window.open(oauthPage);
 				popup.location.href = oauthPage;
 			} else {
@@ -43,16 +43,16 @@ var RS = {
 	},
 	getItem:function(key, callback) {
 		remoteStorage.getStorageInfo(RS.userAddress, function(err, storageInfo) {
-			var client = remoteStorage.createClient(storageInfo, RS.category, RS.token);
-			client.get('SWL/' + key, function(err, data) { 
+			var client = remoteStorage.createClient(storageInfo,RS.category+'/SWL', RS.token);
+			client.get(key, function(err, data) { 
 				callback(data);
 			});
 		});
 	},
 	setItem:function(key, value, callback) {
 		remoteStorage.getStorageInfo(RS.userAddress, function(err, storageInfo) {
-			var client = remoteStorage.createClient(storageInfo, RS.category, RS.token);
-			client.put('SWL/' + key, value, function(err) { 
+			var client = remoteStorage.createClient(storageInfo, RS.category+'/SWL', RS.token);
+			client.put(key, value, function(err) { 
 				callback(err);
 			});
 		});
