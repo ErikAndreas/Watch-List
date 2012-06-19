@@ -44,7 +44,7 @@ var RS = {
 	getItem:function(key, callback) {
 		remoteStorage.getStorageInfo(RS.userAddress, function(err, storageInfo) {
 			var client = remoteStorage.createClient(storageInfo, RS.category, RS.token);
-			client.get(key, function(err, data) { 
+			client.get('SWL/' + key, function(err, data) { 
 				callback(data);
 			});
 		});
@@ -52,7 +52,7 @@ var RS = {
 	setItem:function(key, value, callback) {
 		remoteStorage.getStorageInfo(RS.userAddress, function(err, storageInfo) {
 			var client = remoteStorage.createClient(storageInfo, RS.category, RS.token);
-			client.put(key, value, function(err) { 
+			client.put('SWL/' + key, value, function(err) { 
 				callback(err);
 			});
 		});
