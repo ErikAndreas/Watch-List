@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+<script type="text/javascript" src="script/settings.js"></script>
+<script type="text/javascript" src="script/store.js"></script>
+<script type="text/javascript" src="script/watchlist.js"></script>
+<script type="text/javascript" src="script/util.js"></script>
+<script type="text/javascript" src="script/lastfm.js"></script>
+<script type="text/javascript" src="script/spotify.js"></script>
+<script type="text/javascript" src="script/remoteStorage.js"></script>
+<script>
+	console.log('background');
+	function renderFindings(i,findings){
+		if (findings.length > 0) {
+			for (var j = 0; j < findings.length; j++) {
+				/*var notification = webkitNotifications.createNotification("img/logo.png",
+						  "Watch List Finding",
+						  findings[j].artist +" - "+ findings[j].album);
+					  notification.show();*/
+				console.log(findings[j].artist+' - '+findings[j].album);
+				LastFM.albumCover(findings[j].artist,findings[j].album,findings[j].href.split(':')[2],function(img,ref,artist,album) {
+					if (!img || img.toString().substring(0,4) != 'http') img = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png';					
+					var notification = webkitNotifications.createNotification(img,
+						  "Watch List Finding",
+						  artist +" - "+ album);
+					notification.ondisplay = function(event) {
+					  setTimeout(function() {
+						event.currentTarget.cancel();
+						}, 15000);
+					};
+					notification.onclick = function() {
+						console.log('onclick');
+						window.open('http://open.spotify.com/album/'+ref);
+						notification.cancel();
+					};
+					notification.show();
+				},true);
+			}
+		}
+	}
+	Store.local = LocalStoreAdaptor;
+	var L = window.console;
+	Store.remote = RS;
+	Spotify.userCountry = 'SE';
+	checkIt(true);
+	var t;// = setInterval(function(){checkIt()}, 24 * 60 * 60 * 1000);
+	var stopped = false;
+	Spotify.shouldMemoize = false;
+	
+	function checkIt(hasTimeout) {
+		console.log('checking');
+		if (stopped) clearTimeout(t);
+		var d = WL.getData();	
+		console.log(d);
+		if (null != localStorage.getItem('RS.token')) {
+			RS.token = localStorage.getItem('RS.token');
+			RS.isConnected = true;
+		}
+		// check for remote data
+		if (RS.isConnected) {
+			WL.getRemote(RS.userAddress, function(data){
+				if (data) {
+					data = JSON.parse(data);
+					L.log('remote data',data,'date');
+					// compare remote updatedAt w local d.updatedAt - if remote newer update local
+					var remoteD = Date.parse(data.updatedAt);
+					L.log('remote date',data.updatedAt,remoteD);
+					var localD = Date.parse(WL.getData().updatedAt);
+					if (isNaN(localD)) localD = 0;
+					L.log('local date',localD);
+					if (remoteD > localD) {
+						L.log('remote newer, updating');
+						WL.data = data;
+						WL.data.updatedAt = data.updatedAt;
+						Store.local.setItem('WL-data',JSON.stringify(WL.data));
+					}	
+				}
+			});
+		}
+		for (var i = 0; i < d.news.length; i++) {
+			Spotify.lookupNews(d.news[i].artist,i,renderFindings);
+		}
+		for (var i = 0; i < d.artistAlbums.length; i++) {
+			Spotify.lookupArtistAlbums(d.artistAlbums[i].artist,d.artistAlbums[i].album,i,renderFindings);
+		}
+		if (hasTimeout) {
+			setTimeout(function(){checkIt()}, 12 * 60 * 60 * 1000);
+		}
+	}
+</script>
+</html>
