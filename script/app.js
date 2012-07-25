@@ -46,6 +46,12 @@ var App = {
 		UI.showInfo('Artist album removed');
 		App.renderArtistAlbums();
 	},	
+	addIgnoreAlbum:function(ar,al) {
+		arAl = {'artist':ar,'album':al};
+		WL.addIgnoreAlbum(arAl);
+		App.renderNews();
+		App.renderArtistAlbums();
+	},
 	importData:function() {
 		var o = $('#impta').val();
 		try {
@@ -73,6 +79,7 @@ var App = {
 		// check for local data, if none bootstrap it
 		var d = WL.getData();
 		L.log(WL.data);
+		Spotify.ignoreAlbumList = d.ignoreAlbumList;
 		// bind UI components
 		UI.bind();
 		// check for token passed from remoteStorage login callback
@@ -97,6 +104,10 @@ var App = {
 		App.renderArtistAlbums();
 		if (App.getLastFMUser()) {
 			App.lastFMSuggestions();
+		}
+		if (window.chrome && window.chrome.app && window.chrome.app.isInstalled) {
+			L.log('opening background window - chrome only');
+			window.open("background.html", "bg", "background");
 		}
 	},
 	lastFMSuggestions:function(){

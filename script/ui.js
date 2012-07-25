@@ -52,7 +52,7 @@ var UI = {
 				r.onerror = function(e) {
 					console.log(e);
 				}
-				r.readAsText(f);
+				r.readAsText(f); // takes optional 2nd param encoding
 			}
 		});
 		$('#impBtn').click(function (e) {
@@ -66,10 +66,10 @@ var UI = {
 		$('#expta').bind("click", function (e) {
 			$('#expta').focus();$('#expta').select();
 		});
-		// downloadurl type to allow for drop on desktop (local file system) only works in chrome, spotify uses chromium...
+		// downloadurl type to allow for drop on desktop (local file system) only works in chrome
 		$('#expta').bind("dragstart", function (e) {
 			console.log(e.originalEvent.dataTransfer); // our event is wrapped... 
-			e.originalEvent.dataTransfer.setData("DownloadURL", "text/plain:dragged.txt:data:image/png;base64," + btoa($('#expta').val()));
+			e.originalEvent.dataTransfer.setData("DownloadURL", "text/plain; charset=UTF-8:WatchList.backup."+Util.dformat(new Date())+".txt:data:image/png;base64," + btoa($('#expta').val()));
 		});
 		$('#loginBtn').bind("click", function (e) {
 			localStorage.setItem('RS.userAddress',$('#email').val());
@@ -156,11 +156,12 @@ var UI = {
 		if (findings.length > 0) {
 			$('#nls'+i).html('<img src="img/spotify.png"/>');
 			for (var j = 0; j < findings.length; j++) {
-				$('#findings').append('<div class="captionWrapper"><a href="'+findings[j].href+'"><img style="width:128px;height:128px" id="newsCover'+findings[j].href.split(':')[2]+'"/><div class="captionDesc"><p class="descCon">' + findings[j].artist + ' - ' + findings[j].album + '</p></div></a></div>');
+				$('#findings').append('<div class="captionWrapper"><a href="'+findings[j].href+'"><img style="width:128px;height:128px" id="newsCover'+findings[j].href.split(':')[2]+'"/><div class="captionDesc"><p class="descCon">' + findings[j].artist + ' - ' + findings[j].album + ' <a href="#" onclick="App.addIgnoreAlbum(\''+findings[j].artist+'\',\''+findings[j].album+'\');">hide</a></p></div></a></div>');
 				/*var al = Spotify.m.Album.fromURI(findings[j].href,function(a){
 					$('#newsCover'+a.data.uri.split(':')[2]).attr('src',a.data.cover);
 				});*/
 				LastFM.albumCover(findings[j].artist,findings[j].album,findings[j].href.split(':')[2],function(img,ref) {
+					if (!img || img.toString().substring(0,4) != 'http') img = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png';
 					$('#newsCover'+ref).attr('src',img);
 				});
 			}
@@ -186,6 +187,7 @@ var UI = {
 					$('#aaCover'+a.data.uri.split(':')[2]).attr('src',a.data.cover);
 				});*/
 				LastFM.albumCover(findings[j].artist,findings[j].album,findings[j].href.split(':')[2],function(img,ref) {
+					if (!img || img.toString().substring(0,4) != 'http') img = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png';
 					$('#aaCover'+ref).attr('src',img);
 				}); 
 			}
@@ -194,10 +196,13 @@ var UI = {
 	dispLoggedin:function(){L.log('logged in');},
 	dispLogin:function(){L.log('no login');},
 	showError:function(msg) {
+		showError(msg, 3000);
+	},
+	showError:function(msg, time) {
 		$('#statusMessage').html('Error: '+msg);
 		$('#statusMessage').css('background-color','pink');
 		$('#statusMessage').show('fast');
-		setTimeout("$('#statusMessage').hide('fast')", 3000);
+		setTimeout("$('#statusMessage').hide('fast')", time);
 	},
 	showInfo:function(msg) {
 		$('#statusMessage').html(msg);

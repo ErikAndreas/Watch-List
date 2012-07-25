@@ -3,6 +3,7 @@ var WL = {
 	data:{
 		news:[],
 		artistAlbums:[],
+		ignoreAlbumList:[],
 		updatedAt:{}
 	},
 	remoteKey:'',
@@ -10,6 +11,7 @@ var WL = {
 	clear:function() {
 		WL.data.news = [];
 		WL.data.artistAlbums = [];
+		WL.data.ignoreAlbumList = [];
 		WL.data.updatedAt = {};
 		WL.remoteKey = '';
 	},
@@ -23,6 +25,11 @@ var WL = {
 	addNews:function(n){
 		L.log('wl add news',n);
 		WL.getData().news.push(n);
+		WL.saveData();
+	},
+	addIgnoreAlbum:function(artistAlbum) {
+		if (!WL.getData().ignoreAlbumList) WL.data.ignoreAlbumList = [];
+		WL.getData().ignoreAlbumList.push(artistAlbum);
 		WL.saveData();
 	},
 	containsNews:function(a) {

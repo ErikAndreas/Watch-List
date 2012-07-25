@@ -7,6 +7,7 @@ var Spotify = {
 	newsMem:{},
 	aaMem:{},
 	userCountry:'SE',
+	ignoreAlbumList:[{'artist':'Necro','album':'The Circle of Tyrants'}],
 	lookupNews:function(artist,i,callback) {
 		if (Spotify.shouldMemoize && Spotify.newsMem[artist]) { 
 			L.log('spotify memoize hit for '+artist);
@@ -28,7 +29,9 @@ var Spotify = {
 		var findings = [];
 		if (data.info.num_results > 0) {
 			for (j = 0; j < data.albums.length; j++) {
-				if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase() && Spotify.checkAvail(data.albums[j].availability.territories)) {
+				if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase() &&
+					Spotify.checkAvail(data.albums[j].availability.territories) &&
+					!Spotify.shouldIgnore(data.albums[j].artists[0].name, data.albums[j].name)) {
 					findings.push({
 						'artist':data.albums[j].artists[0].name,
 						'album':data.albums[j].name,
@@ -64,7 +67,8 @@ var Spotify = {
 			for (j = 0; j < data.albums.length; j++) {	
 				if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase()
 					//data.albums[j].name.toLowerCase() == album.toLowerCase() && 
-					&& Spotify.checkAvail(data.albums[j].availability.territories)
+					&& Spotify.checkAvail(data.albums[j].availability.territories) &&
+					!Spotify.shouldIgnore(data.albums[j].artists[0].name, data.albums[j].name)
 					) {					
 					findings.push({
 						'artist':data.albums[j].artists[0].name,
@@ -99,6 +103,16 @@ var Spotify = {
 	},
 	checkAvail:function(cs) {
 		return cs.indexOf(Spotify.userCountry) >= 0 || cs == 'worldwide';
+	},
+	shouldIgnore:function(artist, album) {
+		for (i = 0; Spotify.ignoreAlbumList && i < Spotify.ignoreAlbumList.length; i++) {
+			if (Spotify.ignoreAlbumList[i].artist.toLowerCase() == artist.toLowerCase() && 
+				Spotify.ignoreAlbumList[i].album.toLowerCase() == album.toLowerCase()) {
+				L.log('ignoring ' + artist + ' - ' + album);
+				return true;
+			}
+		}
+		return false;
 	},
 	handleError:function(jXHR, textStatus, errorThrown) {			
 		L.log("Error calling spotify, status: " + jXHR.status + " textstatus: " + textStatus);
