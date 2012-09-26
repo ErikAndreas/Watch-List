@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
 	<meta charset="utf-8">	
 	<title>Watch List</title>
@@ -9,24 +9,27 @@
 	<link rel="stylesheet" href="wl.css">
 	<script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-32448562-1']);
-  _gaq.push(['_trackPageview']);
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-32448562-1']);
+	_gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+	(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
 
-</script>
+	</script>
+	<!-- This is a special version of jQuery with RequireJS built-in 
+	http://verekia.com/requirejs/build-simple-client-side-mvc-app-require-js-->
+	<script data-main="scripts/main" src="scripts/require-jquery.js"></script>
 </head>
 <body>
 <div id="menu" style="background-color:black;text-align:center;line-height:3em">
 	<a id="m1" href="#">Overview</a> 
-	<a id="m2" href="#">News</a>
-	<a id="m3" href="#">Albums</a>
-	<a id="m4" href="#">Settings</a>
+	<a id="m2" href="#news">News</a>
+	<a id="m3" href="#albums">Albums</a>
+	<a id="m4" href="#settings">Settings</a>
 </div>
 <div id="header">
 	<div id="hcontent">Watch<img style="vertical-align:middle" src="img/logo.png"/>List</div>
@@ -130,16 +133,5 @@
 </div>
 <div id="statusMessage"></div>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-<script type="text/javascript" src="script/ui.js"></script>
-<script type="text/javascript" src="script/settings.js"></script>
-<script type="text/javascript" src="script/store.js"></script>
-<script type="text/javascript" src="script/watchlist.js"></script>
-<script type="text/javascript" src="script/util.js"></script>
-<script type="text/javascript" src="script/lastfm.js"></script>
-<script type="text/javascript" src="script/spotify.js"></script>
-<script type="text/javascript" src="script/remoteStorage.js"></script>
-<script type="text/javascript" src="script/app.js"></script>
-<script type="text/javascript" src="script/main.js"></script>
 </body>
 </html> 

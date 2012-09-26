@@ -25,6 +25,7 @@ textarea {width:300px;height:150px;}
 .listTable td {
 	padding:3px;
 	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#fcfcfc), to(#ECEBE8));
+	background: -moz-linear-gradient(top,  #fcfcfc,  #ECEBE8);
 	text-transform:capitalize;
 }
 #menu a {
@@ -35,7 +36,7 @@ textarea {width:300px;height:150px;}
 	font-weight:bold;
 }
 #header {
-	height:60px;background: -webkit-gradient(linear, 0 0, 0 bottom, from(#c3c0c0), to(#eeeeee));text-align:center;/*border-bottom: 1px solid*/
+	height:60px;background: -webkit-gradient(linear, 0 0, 0 bottom, from(#c3c0c0), to(#eeeeee));background: -moz-linear-gradient(top,  #c3c0c0,  #eeeeee);text-align:center;/*border-bottom: 1px solid*/
 }
 #hcontent {
 	font-weight:bold;font-size: 32px;padding:2px;color:black;text-shadow:1px 2px 3px rgba(39, 116, 168, .77)
@@ -63,6 +64,7 @@ textarea {width:300px;height:150px;}
 	background:white;
 	padding:1%;
 	-webkit-border-radius: 7px;
+	border-radius: 7px;
 }
 .whitebox a {
 	color:#333333;
