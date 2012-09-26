@@ -1,5 +1,0 @@
-var Settings = {
-	lastfm:{
-		apiKey:'00198b31b392d0750f88819830e49680'
-	}
-};
