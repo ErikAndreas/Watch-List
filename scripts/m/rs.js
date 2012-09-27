@@ -1,5 +1,6 @@
 // RemoteStorage 
 // depends on remoteStorage.js and uses localStorage
+// TODO: consider minor refactoring from http://tutorial.unhosted.5apps.com/js/tutorial.js
 define(["m/store","logger","scripts/m/remoteStorage.js"],function(Store,L) {
 
 	var category = 'music';
@@ -11,12 +12,13 @@ define(["m/store","logger","scripts/m/remoteStorage.js"],function(Store,L) {
 		var popup = window.open('');
 		remoteStorage.getStorageInfo(Store.local.getItem('RS.userAddress'), function(err, storageInfo) {
 			if (!err) {
-				//window.location = remoteStorage.createOAuthAddress(storageInfo, [RS.category], window.location.href);
+				// save storageInfo obj
+				Store.local.setItem('RS.userStorageInfo', JSON.stringify(storageInfo));
 				L.log('pathname ' + location.pathname.substring(0,location.pathname.lastIndexOf('/')));
 				var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '/receiveToken.html';
 				L.log('will open ' + redirectUri + ' for oauth dance');
 				var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [category+':rw'], redirectUri);
-				//var popup = window.open(oauthPage);
+				//popup = window.open(oauthPage);
 				popup.location.href = oauthPage;
 			} else {
 				popup.close();
@@ -30,23 +32,27 @@ define(["m/store","logger","scripts/m/remoteStorage.js"],function(Store,L) {
 	function getItem(key, callback) {
 		if (!token) token = Store.local.getItem('RS.token');
 		L.log('tryin remote get for ' + key + ' using token ' + token);
-		remoteStorage.getStorageInfo(Store.local.getItem('RS.userAddress'), function(err, storageInfo) {
+		var storageInfo = JSON.parse(Store.local.getItem('RS.userStorageInfo'));
+		if (storageInfo) {
 			var client = remoteStorage.createClient(storageInfo,category+'/SWL', token);
+			// TODO: check err == 401 -> session expired, if (err) -> path not found, data == undefined -> no data on path
 			client.get(key, function(err, data) { 
-				callback(data);
+				callback(data,err);
 			});
-		});
+		} else {
+			callback(null,'no storageInfo, connect again');
+		}
 	}
 	
 	function setItem(key, value, callback) {
 		if (!token) token = Store.local.getItem('RS.token');
 		L.log('tryin remote set for ' + key + ' using token ' + token);
-		remoteStorage.getStorageInfo(Store.local.getItem('RS.userAddress'), function(err, storageInfo) {
-			var client = remoteStorage.createClient(storageInfo, category+'/SWL', token);
-			client.put(key, value, function(err) { 
-				callback(err);
-			});
-		});
+		var storageInfo = JSON.parse(Store.local.getItem('RS.userStorageInfo'));
+		var client = remoteStorage.createClient(storageInfo, category+'/SWL', token);
+		// TODO: check err == 401 -> session expired, if (err) -> path not found, data == undefined -> no data on path
+		client.put(key, value, function(err) { 
+			callback(err);
+		});		
 	}
 	
 	return {

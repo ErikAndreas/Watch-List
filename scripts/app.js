@@ -1,5 +1,5 @@
 /**
-	TODO: extract all direct call to window.location.hash to UI helper 
+	TODO: extract all direct call to window.location.* to UI helper 
 */
 
 define(["logger", "m/store","m/localstoreadaptor","m/rs","r/router","spotify","ui","c/SettingsController","m/watchlist"], 
