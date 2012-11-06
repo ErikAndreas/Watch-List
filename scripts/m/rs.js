@@ -1,6 +1,7 @@
 // RemoteStorage 
 // depends on remoteStorage.js and uses localStorage
 // TODO: consider minor refactoring from http://tutorial.unhosted.5apps.com/js/tutorial.js
+"use strict";
 define(["m/store","logger","scripts/m/remoteStorage.js"],function(Store,L) {
 
 	var category = 'music';
@@ -9,19 +10,21 @@ define(["m/store","logger","scripts/m/remoteStorage.js"],function(Store,L) {
 	
 	function connect() {
 		// popup will be null if prevented by browser
-		var popup = window.open('');
+		//var popup = window.open('');
 		remoteStorage.getStorageInfo(Store.local.getItem('RS.userAddress'), function(err, storageInfo) {
 			if (!err) {
 				// save storageInfo obj
 				Store.local.setItem('RS.userStorageInfo', JSON.stringify(storageInfo));
 				L.log('pathname ' + location.pathname.substring(0,location.pathname.lastIndexOf('/')));
-				var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '/receiveToken.html';
+				//var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '/receiveToken.html';
+				var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '';
 				L.log('will open ' + redirectUri + ' for oauth dance');
 				var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [category+':rw'], redirectUri);
 				//popup = window.open(oauthPage);
-				popup.location.href = oauthPage;
+				//popup.location.href = oauthPage;
+				location.href = oauthPage;
 			} else {
-				popup.close();
+				//popup.close();
 				$('#loginC').show('fast');
 				$('#loginMsg').html('Login failed, try again ('+err+')').show();
 				console.log(err);
@@ -54,11 +57,16 @@ define(["m/store","logger","scripts/m/remoteStorage.js"],function(Store,L) {
 			callback(err);
 		});		
 	}
+
+	function getToken() {
+		return remoteStorage.receiveToken();
+	}
 	
 	return {
 		isConnected:isConnected,
 		connect:connect,
 		getItem:getItem,
-		setItem:setItem
+		setItem:setItem,
+		getToken:getToken
 	}
 })

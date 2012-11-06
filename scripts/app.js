@@ -1,7 +1,7 @@
 /**
 	TODO: extract all direct call to window.location.* to UI helper 
 */
-
+"use strict";
 define(["logger", "m/store","m/localstoreadaptor","m/rs","r/router","spotify","ui","c/SettingsController","m/watchlist"], 
 	function(L,Store,LocalStoreAdaptor,RS, Router, Spotify, UI,settingsController,WL) {	
 
@@ -18,6 +18,16 @@ define(["logger", "m/store","m/localstoreadaptor","m/rs","r/router","spotify","u
 			UI.setCurrTab('tab4');
 		}
 		Router.init();
+
+		// we might be back on index after oauth redirect
+		if (RS.getToken()) {
+			var token = RS.getToken();
+			Store.local.setItem('RS.token',token);
+	        RS.token = token;
+	        RS.isConnected = true;
+	        window.location.hash = 'settings/checkremote';
+	        $('#connectedState').attr('src','img/connect-icon.png');
+		}
 		
 		WL.setRemoteKey(Store.local.getItem('RS.userAddress'));
 		L.log('init wl remote key ' + Store.local.getItem('RS.userAddress'));
@@ -25,18 +35,7 @@ define(["logger", "m/store","m/localstoreadaptor","m/rs","r/router","spotify","u
 		// check for remote data
 		settingsController.checkRemote();
 		L.log('isconnected ' + RS.isConnected);
-		if (RS.isConnected) UI.setConnected();
-		
-		window.addEventListener('message', function(event) {
-			if (event.origin == location.protocol +'//'+ location.host) {
-				console.log('Received an OAuth token: ' + event.data);
-				Store.local.setItem('RS.token',event.data);
-				RS.token = event.data;
-				RS.isConnected = true;
-				window.location.hash = 'settings/checkremote';
-				$('#connectedState').attr('src','img/connect-icon.png');
-			}
-		}, false);
+		if (RS.isConnected) UI.setConnected();		
 	}
 	
 	return {

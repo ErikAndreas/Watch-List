@@ -1,3 +1,4 @@
+"use strict";
 define(["jquery", "settings","ui","logger"],function($,Settings,UI,L) {
 
 	var shouldMemoize = false;

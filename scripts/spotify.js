@@ -1,3 +1,4 @@
+"use strict";
 define(["jquery", "logger","util"], function($,L,Util){
 	var artistAlbumsFindings = [];
 	var shouldMemoize = true;
@@ -27,7 +28,7 @@ define(["jquery", "logger","util"], function($,L,Util){
 	function hln(data,artist,callback,i,ignoreReleaseList) {
 		var findings = [];
 		if (data.info.num_results > 0) {
-			for (j = 0; j < data.albums.length; j++) {
+			for (var j = 0; j < data.albums.length; j++) {
 				if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase() &&
 					checkAvail(data.albums[j].availability.territories) &&
 					!Util.shouldIgnore(ignoreReleaseList,data.albums[j].href)) {
@@ -68,7 +69,7 @@ define(["jquery", "logger","util"], function($,L,Util){
 	function hlaa(data,artist,album,callback,i) {
 		var findings = [];
 		if (data.info.num_results > 0) {
-			for (j = 0; j < data.albums.length; j++) {	
+			for (var j = 0; j < data.albums.length; j++) {	
 				if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase()
 					&& checkAvail(data.albums[j].availability.territories) 					
 					) {					

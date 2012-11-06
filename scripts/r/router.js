@@ -1,3 +1,4 @@
+"use strict";
 define(["logger","c/StartController","c/NewsArtistAlbumController","c/SettingsController","scripts/r/routie.js"],function(L,startController,newsArtistAlbumController,settingsController){
 	
 	function init() {

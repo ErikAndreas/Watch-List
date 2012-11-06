@@ -1,4 +1,5 @@
 /* could use http://westcoastlogic.com/lawnchair */
+"use strict";
 define(function() {
 	return {
 		getItem:function(key) {

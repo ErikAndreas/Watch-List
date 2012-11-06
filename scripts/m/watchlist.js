@@ -1,3 +1,4 @@
+"use strict";
 define(["logger", "m/store"],function(L, Store) {
 	// this data is backed by local Store
 	var data = {

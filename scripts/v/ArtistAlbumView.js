@@ -1,3 +1,4 @@
+"use strict";
 define(["logger","lastfm"],function(L,LastFM) {
 	
 	function renderArtistAlbums(o){
@@ -5,7 +6,7 @@ define(["logger","lastfm"],function(L,LastFM) {
 		$('#outAA').html('');
 		var out = '';
 		if (o && o.length > 0) out += ('<table class="listTable"><tr><th>Status</th><th>Artist</th><th>Album</th><th>Added</th><th>Delete</th></tr>');
-		for (i = 0; o && i < o.length; i++) {
+		for (var i = 0; o && i < o.length; i++) {
 			out += ('<tr><td id="aals'+i+'"><img src="img/error.gif"/></td><td id="aai'+i+'">'+o[i].artist + '</td><td>'+o[i].album + '</td><td>' + o[i].added + '</td><td><a href="javascript:void(0)" onclick="window.location.hash=\'aa/rm/'+i+'\';"><img src="img/trash.png"/></a></td></tr>');
 		}
 		if (o && o.length > 0) out += ('</table>');

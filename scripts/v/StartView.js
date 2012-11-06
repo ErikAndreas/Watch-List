@@ -1,3 +1,4 @@
+"use strict";
 define(["jquery","spotify","logger",],function($,Spotify,L) {
 
 	function renderLastFMFindings(findings){

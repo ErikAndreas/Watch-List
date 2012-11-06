@@ -1,4 +1,5 @@
-define(["logger","v/SettingsView","ui","m/watchlist","m/rs","m/store"],function(L,settingsView,UI,WL,RS,Store) {
+"use strict";
+define(["logger","ui","m/watchlist","m/rs","m/store"],function(L,UI,WL,RS,Store) {
 	
 	function start() {
 		UI.setCurrTab('tab3');

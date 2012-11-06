@@ -1,3 +1,4 @@
+"use strict";
 define(["logger","v/NewsView","m/watchlist","spotify","ui","util","v/ArtistAlbumView"],function(L,newsView,WL,Spotify,UI,Util,artistAlbumView) {
 	
 	function startNews() {

@@ -1,3 +1,4 @@
+"use strict";
 define(["jquery","logger","m/store","m/watchlist","util"],function($,L,Store,WL,Util) {
 	
 	var CURRTAB_KEY="WL-CURRTABKEY";

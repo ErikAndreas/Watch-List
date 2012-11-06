@@ -1,3 +1,4 @@
+"use strict";
 define(["logger","lastfm","util"],function(L,LastFM,Util) {
 
 	function renderNews(o) {
@@ -5,7 +6,7 @@ define(["logger","lastfm","util"],function(L,LastFM,Util) {
 		$('#out').html('');
 		var out = '';
 		if (o && o.length > 0) out += ('<table class="listTable"><tr><th>Status</th><th>Artist</th><th>Added</th><th>Delete</th></tr>');
-		for (i = 0; o && i < o.length; i++) {
+		for (var i = 0; o && i < o.length; i++) {
 			out += ('<tr><td id="nls'+i+'"><img src="img/error.gif"/></td><td id="ni'+i+'">'+o[i].artist + '</td><td>' + o[i].added + '</td><td><a href="javascript:void(0)" onclick="window.location.hash=\'news/rm/'+i+'\';"><img src="img/trash.png"/></a></td></tr>');
 		}
 		if (o && o.length > 0) out += ('</table>');

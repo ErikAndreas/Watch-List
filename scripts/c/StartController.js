@@ -1,3 +1,4 @@
+"use strict";
 define(["v/StartView","m/store","lastfm","logger","spotify","ui"],function(startView, Store, LastFM,L,Spotify,UI) {
 	
 	function getLastFMUser() {
