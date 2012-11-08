@@ -9,10 +9,12 @@ define(["logger","v/NewsView","m/watchlist","spotify","ui","util","v/ArtistAlbum
 	function addNews(a) {
 		if (WL.containsNews(a)) {
 			UI.showError('Skipping, already got "'+a+'" in list');
+			UI.clearNewsInput();
 			window.location.hash = 'news';
 		} else if (a.length > 0 ) {
 			L.log('app add news', a);
 			WL.addNews({"artist": a, "added": Util.dformat()});
+			UI.clearNewsInput();
 			UI.showInfo('"'+a+'" added to Watchlist');
 			window.location.hash = 'news';
 		} else {
@@ -64,9 +66,11 @@ define(["logger","v/NewsView","m/watchlist","spotify","ui","util","v/ArtistAlbum
 	function addArtistAlbum(ar,al) {
 		if (WL.containsArtistAlbum(ar,al)) {
 			UI.showError('Skipping, already got "'+ar+' - '+al+'" in list');
+			UI.clearAAInput();
 			window.location.hash = 'albums';
 		} else if (ar.length > 0 && al.length > 0) {
 			WL.addArtistAlbum({"artist": ar, "album": al, "added": Util.dformat()});
+			UI.clearAAInput();
 			UI.showInfo('"'+ar+' - '+al+'" added to Watchlist');
 			window.location.hash = 'albums';
 		} else {

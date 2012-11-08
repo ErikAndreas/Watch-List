@@ -174,6 +174,15 @@ define(["jquery","logger","m/store","m/watchlist","util"],function($,L,Store,WL,
 		$('#connectedState').attr('src','img/connect-icon.png');
 		$('#syncLink').html('You are connected');
 	}
+
+	function clearAAInput() {
+		$('#artist').val('');
+		$('#album').val('');
+	}
+
+	function clearNewsInput() {
+		$('#artistNews').val('');
+	}
 	
 	return {
 		CURRTAB_KEY:CURRTAB_KEY,
@@ -181,6 +190,8 @@ define(["jquery","logger","m/store","m/watchlist","util"],function($,L,Store,WL,
 		showInfo:showInfo,
 		showError:showError,
 		setCurrTab:setCurrTab,
-		setConnected:setConnected
+		setConnected:setConnected,
+		clearAAInput:clearAAInput,
+		clearNewsInput:clearNewsInput
 	}
 })
