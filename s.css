@@ -1,0 +1,95 @@
+html {background: rgb(238, 238, 238);}
+body {margin-top: 50px;color:#333333;text-shadow: 0px 1px 1px #FFFFFF;}
+html,body {
+	font-family: 'Lato', sans-serif;
+}
+a {
+	color:#3f3f3f;
+	text-decoration: none;
+}
+h2 {
+	font-family: 'Asap', sans-serif;
+	font-size: 14px;
+}
+h3 {
+	font-family: 'Asap', sans-serif;
+	font-size: 13px;
+}
+hr {
+	 height:1px;
+	 color:rgb(219, 219, 219);
+	 background-color: rgb(219, 219, 219);
+	 border-width:0;
+}
+#menu ul {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+#menu li {
+	float:left;
+}
+#menu .selected {
+	border-bottom: 4px solid rgb(219, 219, 219);
+}
+#menu a {
+	font-family: 'Asap', sans-serif;
+	display:block;
+	font-size: 20px;
+	/*width:60px;	*/
+	/*top right bottom left*/
+	padding: 10px 20px 10px 0px;
+}
+.container {
+	margin: 0 auto 0; 
+	max-width: 900px;
+}
+#header-fixed {position:fixed; top:0px;z-index:100000; width:100%;background: rgb(238, 238, 238);border-bottom: 1px solid rgb(219, 219, 219);}
+#menu  {height:40px;}
+
+.artistAlbum {
+	font-size: 13px;
+}
+/* text-overflow affects block, span is not block default */
+.artistAlbumGrid {
+	font-size: 13px;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	width: 128px;
+	white-space:nowrap;
+}
+.albumCover {
+	width: 128px;
+	height:128px;
+}
+ul {margin-left: 0px;}
+ul.list {
+	padding: 0px;
+    display: table;
+    border-collapse: collapse;
+    text-transform:capitalize;
+}
+ul.list li {
+    display: table-row;
+	border-bottom: 1px solid rgb(219, 219, 219);
+	/*background: -webkit-gradient(linear, 0 0, 0 bottom, from(#fcfcfc), to(#ECEBE8));
+	background: -moz-linear-gradient(top,  #fcfcfc,  #ECEBE8);*/
+}
+ul.list li > * {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 13px;
+    padding: 3px;
+}
+ul.grid {
+	padding: 0px;
+    list-style: none;
+    text-transform:capitalize;
+}
+ul.grid li {
+	padding: 3px;
+	float: left;
+}
+.info {background:green;}
+.error {background: red;}
+.cleared { clear:both }

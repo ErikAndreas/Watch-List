@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" ng-app="swl">
+<head>
+	<meta charset="utf-8">
+	<title>Watch List</title>
+  <link href='http://fonts.googleapis.com/css?family=Lato:400|Asap:700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="s.css">
+</head>
+<body>
+
+  <div id="header-fixed">
+    <div ng-controller="navCtrl" id="menu" class="container">
+    <ul id="menuItems">
+      <li ng-class="navClass('home')"><a href="#/home">Watch List</a></li>
+      <li ng-class="navClass('news')"><a href="#/news">News</a></li>
+      <li ng-class="navClass('albums')"><a href="#/albums">Albums</a></li>
+      <li ng-class="navClass('settings')"><a href="#/settings">Settings</a></li>
+    </div>
+  </div>
+
+
+<div class="container">
+  <div ng-controller="StatusController">
+    <div ng-repeat="status in statuses" ng-class="status.type">
+      {{status.msg}}
+    </div>
+  </div>
+
+	<div ng-view></div>
+</div>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js"></script>
+	<script src="app.js"></script>
+	<script src="controllers.js"></script>
+	<script src="services.js"></script>		
+	<script src="directives.js"></script>		
+	<script src="remoteStorage.js"></script>
+</body>
+</html>
