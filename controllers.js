@@ -1,33 +1,5 @@
 'use strict';
 swl.controller('LastFMCtrl', function LastFMCtrl($scope,lastFMOnSpotifyService,storeService,artistAlbumModelService) {
-	/*lastFMService.getNews().then(function(d) {
-		var onSpot = [];
-		var suggs = [];
-		for (var i = 0; i < d.length; i++) {
-			spotifyService.lookupArtistAlbums(d[i].artist,d[i].album, d[i].image, function(r,artist, album,img){
-				if (r.length > 0) {
-					for (var i = 0; i < r.length;i++) {
-						console.log('onSpot ' , r[i].artist, r[i].album,r[i].img,r[i].href);
-						onSpot.push({
-		                	'artist': r[i].artist,
-		                	'album':r[i].album,
-		                	'href':r[i].href,
-		                	'img':r[i].img
-		              	});
-					}
-				} else {
-					console.log('sugg' , artist, album,img);
-					suggs.push({
-		                'artist': artist,
-		                'album':album,
-		                'img':img
-		            });
-				}
-			});
-		}
-		$scope.suggs = suggs;
-		$scope.onSpot = onSpot;
-	});*/
 	if (storeService.local.getItem('lastFMuserName')) {
 		$scope.lastFMuserName = storeService.local.getItem('lastFMuserName');
 		lastFMOnSpotifyService.getSuggsOnSpot($scope.lastFMuserName,function(suggs, onSpot) {
@@ -122,14 +94,12 @@ swl.controller('SettingsCtrl',function SettingsCtrl($scope,$rootScope,rsService,
 });
 
 swl.controller('navCtrl', ['$scope', '$location', function ($scope, $location) {
-    $scope.navClass = function (page) {
-        var currentRoute = $location.path().substring(1) || 'home';
-        //console.log(page,currentRoute);
-        return page === currentRoute ? 'selected' : '';
-    };        
+    $scope.isActive = function(route) {
+    	//console.log(route);
+        return route === $location.path();
+    }
 }]);
 
 swl.controller('StatusController',function StatusController($scope, statusService) {	
 	$scope.statuses = statusService.statuses;
-	//statusService.add('info', 'hello there');	
 });

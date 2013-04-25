@@ -1,34 +1,35 @@
 <!doctype html>
 <html lang="en" ng-app="swl">
 <head>
-	<meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title>Watch List</title>
+  <title>Watch List</title>
   <link href='http://fonts.googleapis.com/css?family=Lato:400|Asap:700' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" href="normalize.css">
-<link rel="stylesheet" href="s.css">
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="s.css">
 </head>
 <body>
 
   <div id="header-fixed">
     <div ng-controller="navCtrl" id="menu" class="container">
     <ul id="menuItems">
-      <li ng-class="navClass('home')"><a href="#/home">Watch List</a></li>
-      <li ng-class="navClass('news')"><a href="#/news">News</a></li>
-      <li ng-class="navClass('albums')"><a href="#/albums">Albums</a></li>
-      <li ng-class="navClass('settings')"><a href="#/settings">Settings</a></li>
+      <li ng-class="{selected:isActive('/home')}"><a href="#/home">Watch List</a></li>
+      <li ng-class="{selected:isActive('/news')}"><a href="#/news">News</a></li>
+      <li ng-class="{selected:isActive('/albums')}"><a href="#/albums">Albums</a></li>
+      <li ng-class="{selected:isActive('/settings')}"><a href="#/settings">Settings</a></li>
     </div>
   </div>
 
 
 <div class="container">
-  <div ng-controller="StatusController">
+  <div ng-controller="StatusController" class="status-fixed">
     <div ng-repeat="status in statuses" ng-class="status.type">
       {{status.msg}}
     </div>
   </div>
 
 	<div ng-view></div>
+
 </div>
 	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js"></script>
 	<script src="app.js"></script>

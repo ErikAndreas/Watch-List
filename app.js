@@ -14,6 +14,10 @@ swl.config(function($routeProvider,$compileProvider) {
 	$compileProvider.urlSanitizationWhitelist(/^\s*(https?|spotify):/);
 });
 
+swl.value('swlSettings',{
+		lastFMapiKey:'00198b31b392d0750f88819830e49680'
+});
+
 swl.run(function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService){
 	console.log('swl.run');
 	storeService.local = lsAdaptorService;

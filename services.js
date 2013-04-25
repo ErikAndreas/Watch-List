@@ -1,12 +1,13 @@
 'use strict';
-swl.factory('lastFMService', function($http,$q) {
+swl.factory('lastFMService', function($http,$q,swlSettings) {
   var lastFMService = {
     // http://stackoverflow.com/questions/12505760/angularjs-processing-http-response-in-service
     getNews: function(un) {
       var findings = [];
+      console.log(swlSettings);
       // $http returns a promise, which has a then function, which also returns a promise
-      var p1 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=1&user='+un+'&api_key=00198b31b392d0750f88819830e49680');
-      var p2 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=0&user='+un+'&api_key=00198b31b392d0750f88819830e49680');
+      var p1 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=1&user='+un+'&api_key='+swlSettings.lastFMapiKey);
+      var p2 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=0&user='+un+'&api_key='+swlSettings.lastFMapiKey);
       var promise = $q.all([p1,p2]).then(function(d){
         // d will contain array of responses
         // The then function here is an opportunity to modify the response
@@ -24,7 +25,7 @@ swl.factory('lastFMService', function($http,$q) {
       return promise;
     },
     albumCover: function(artist, album, callback,ref) {
-      $http.get('http://ws.audioscrobbler.com/2.0/?method=album.getInfo&format=json&artist='+artist.replace(/&/g,'%26')+'&album='+album.replace(/&/g,'%26')+'&api_key=00198b31b392d0750f88819830e49680').success(function(data) {
+      $http.get('http://ws.audioscrobbler.com/2.0/?method=album.getInfo&format=json&artist='+artist.replace(/&/g,'%26')+'&album='+album.replace(/&/g,'%26')+'&api_key='+swlSettings.lastFMapiKey).success(function(data) {
         var img = {};
         if (data.album && data.album.image[2]["#text"].length > 0) {
           img = data.album.image[2]["#text"];
@@ -262,12 +263,14 @@ swl.factory('artistNewsModelService',function(watchListService,spotifyService,la
         artistNewsModelService.artistNewsModel.news.push({"artist": a, "added": watchListService.dformat()});
         artistNewsModelService.populate();
         watchListService.saveNews(artistNewsModelService.artistNewsModel.news);
+        statusService.add('info','Added '+a);
       }
     },
     rmNews:function(idx) {
       artistNewsModelService.artistNewsModel.news.splice(idx,1);
       artistNewsModelService.populate();
       watchListService.saveNews(artistNewsModelService.artistNewsModel.news);
+      statusService.add('info','Removed');
     },
     addIgnore:function(href) {
       artistNewsModelService.artistNewsModel.ignoreReleaseList.push(href);
@@ -327,12 +330,14 @@ swl.factory('artistAlbumModelService',function(watchListService,spotifyService,l
         artistAlbumModelService.artistAlbumModel.artistAlbums.push({"artist": ar, "album": al, "added": watchListService.dformat()});
         artistAlbumModelService.populate();
         watchListService.saveArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums);
+        statusService.add('info','Added '+ar+' - '+al);
       }
     },
     rmArtistAlbum:function(idx) {
       artistAlbumModelService.artistAlbumModel.artistAlbums.splice(idx,1);
       artistAlbumModelService.populate();
       watchListService.saveArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums);
+      statusService.add('info','Removed');
     },
     containsArtistAlbum:function(ar,al) {
       var n = artistAlbumModelService.artistAlbumModel.artistAlbums;
