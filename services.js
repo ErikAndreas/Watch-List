@@ -108,13 +108,18 @@ swl.factory('spotifyService', function($http) {
       }
     },
     lookupArtist:function(uri, callback) {
+      //console.log('checking ' + uri);
       $http.get('http://ws.spotify.com/lookup/1/.json?uri='+uri).success(function(data) {
+        //console.log(data);
         if (data.artist) {
           callback(data.artist.name);
         }
         else if (data.album) {
           callback(data.album.artist, data.album.name);
         }
+      }).
+      error(function(data, status, headers, config) {
+        console.log('fail',data, status);
       });
     },
     checkAvail: function(cs) {

@@ -47,6 +47,40 @@ swl.directive("dropFileZone", ['$rootScope', function($rootScope) {
   }
 }]);
 
+swl.directive("dropFromSpotify", ['$rootScope', function($rootScope) {
+  
+  function dragEnter(evt, element) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    
+  };
+  function dragOver(evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    //console.log(evt);
+  };
+  function drop(evt, element) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    //console.log(evt);
+  };
+  
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs)  {
+      element.bind('dragenter', function(evt) {
+        dragEnter(evt, element);
+      });
+      element.bind('dragover', dragOver);
+      element.bind('drop', function(evt) {
+        drop(evt, element);
+        //console.log(evt.dataTransfer.getData('text'));
+        $rootScope.$broadcast('dropFromSpotifyEvent', evt.dataTransfer.getData('text'));
+      });
+    }
+  }
+}]);
+
 swl.directive("dragToFile", function(watchListService) {
   return {
     restrict: 'A',

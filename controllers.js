@@ -93,11 +93,23 @@ swl.controller('SettingsCtrl',function SettingsCtrl($scope,$rootScope,rsService,
 	});
 });
 
-swl.controller('navCtrl', ['$scope', '$location', function ($scope, $location) {
+swl.controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService', function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
     $scope.isActive = function(route) {
     	//console.log(route);
         return route === $location.path();
     }
+
+    $rootScope.$on('dropFromSpotifyEvent', function(evt,fc) {
+		//console.log('got dropFromSpotifyEvent', fc)
+		var uri = fc.substring(fc.lastIndexOf('/')+1);
+		//console.log(uri);
+		spotifyService.lookupArtist('spotify:artist:'+uri,function(artist) {
+			//console.log(artist);
+			artistNewsModelService.addNews(artist);
+		});
+		// weird, if not calling $apply the $http call in lookupArtist wont happen...
+		$scope.$apply();
+	});
 }]);
 
 swl.controller('StatusController',function StatusController($scope, statusService) {	
