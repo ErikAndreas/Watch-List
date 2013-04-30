@@ -255,7 +255,7 @@ swl.factory('artistNewsModelService',function(watchListService,spotifyService,la
             },artistNewsModelService.artistNewsModel.artistNewsFindings.length);       
           }
         } else {
-          artistNewsModelService.artistNewsModel.imgs[i] = 'img/close-32.png';
+          artistNewsModelService.artistNewsModel.imgs[i] = 'img/delete-32.png';
         }
         },i,artistNewsModelService.artistNewsModel.ignoreReleaseList);
       }
@@ -322,7 +322,7 @@ swl.factory('artistAlbumModelService',function(watchListService,spotifyService,l
             },artistAlbumModelService.artistAlbumModel.artistAlbumsFindings.length);       
           }
         } else {
-          artistAlbumModelService.artistAlbumModel.imgs[i] = 'img/close-32.png';
+          artistAlbumModelService.artistAlbumModel.imgs[i] = 'img/delete-32.png';
         }
         },i);
       }

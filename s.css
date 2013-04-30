@@ -26,10 +26,6 @@ button {
 	border: solid 1px rgb(219, 219, 219);
 	line-height: 21px;
 }
-/* pesky ios fix*/
-input, textarea {
-  -webkit-border-radius: 0;
-}
 #menu ul {
 	list-style-type:none;
 	margin:0;
