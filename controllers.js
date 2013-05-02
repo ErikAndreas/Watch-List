@@ -1,5 +1,5 @@
 'use strict';
-swl.controller('LastFMCtrl', function LastFMCtrl($scope,lastFMOnSpotifyService,storeService,artistAlbumModelService) {
+angular.module('swl').controller('LastFMCtrl', function LastFMCtrl($scope,lastFMOnSpotifyService,storeService,artistAlbumModelService) {
 	if (storeService.local.getItem('lastFMuserName')) {
 		$scope.lastFMuserName = storeService.local.getItem('lastFMuserName');
 		lastFMOnSpotifyService.getSuggsOnSpot($scope.lastFMuserName,function(suggs, onSpot) {
@@ -22,11 +22,11 @@ swl.controller('LastFMCtrl', function LastFMCtrl($scope,lastFMOnSpotifyService,s
   	}
 });
 
-swl.controller('NewsCtrl',function NewsCtrl($scope,artistNewsModelService) {
+angular.module('swl').controller('NewsCtrl',function NewsCtrl($scope,artistNewsModelService) {
 	$scope.artistNewsModel = artistNewsModelService.artistNewsModel;
 	artistNewsModelService.populate();
 
-	console.log($scope);
+	//console.log($scope);
 
 	$scope.addArtistNews = function() {
 		// TODO check not empty
@@ -45,10 +45,10 @@ swl.controller('NewsCtrl',function NewsCtrl($scope,artistNewsModelService) {
   	}
 });
 
-swl.controller('AlbumsCtrl',function AlbumsCtrl($scope, artistAlbumModelService){
+angular.module('swl').controller('AlbumsCtrl',function AlbumsCtrl($scope, artistAlbumModelService){
 	$scope.artistAlbumModel = artistAlbumModelService.artistAlbumModel;
 	artistAlbumModelService.populate();
-	console.log($scope);
+	//console.log($scope);
 	$scope.addArtistAlbum = function() {
 		// TODO check not empty
 		var ar = $scope.mAddArtist;
@@ -65,7 +65,7 @@ swl.controller('AlbumsCtrl',function AlbumsCtrl($scope, artistAlbumModelService)
   	}
 });
 
-swl.controller('SettingsCtrl',function SettingsCtrl($scope,$rootScope,rsService,watchListService,statusService){
+angular.module('swl').controller('SettingsCtrl',function SettingsCtrl($scope,$rootScope,rsService,watchListService,statusService){
 	
 	$scope.auth = function() {
 		rsService.auth($scope.mUserAddress);
@@ -93,7 +93,7 @@ swl.controller('SettingsCtrl',function SettingsCtrl($scope,$rootScope,rsService,
 	});
 });
 
-swl.controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService', function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
+angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService', function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
     $scope.isActive = function(route) {
     	//console.log(route);
         return route === $location.path();
@@ -112,6 +112,6 @@ swl.controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService'
 	});
 }]);
 
-swl.controller('StatusController',function StatusController($scope, statusService) {	
+angular.module('swl').controller('StatusController',function StatusController($scope, statusService) {	
 	$scope.statuses = statusService.statuses;
 });

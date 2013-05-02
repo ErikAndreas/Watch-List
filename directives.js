@@ -1,5 +1,5 @@
 'use strict';
-swl.directive("dropFileZone", ['$rootScope', function($rootScope) {
+angular.module('swl').directive("dropFileZone", ['$rootScope', function($rootScope) {
   
   function dragEnter(evt, element) {
     evt.preventDefault();
@@ -47,7 +47,7 @@ swl.directive("dropFileZone", ['$rootScope', function($rootScope) {
   }
 }]);
 
-swl.directive("dropFromSpotify", ['$rootScope', function($rootScope) {
+angular.module('swl').directive("dropFromSpotify", ['$rootScope', function($rootScope) {
   
   function dragEnter(evt, element) {
     evt.preventDefault();
@@ -81,7 +81,7 @@ swl.directive("dropFromSpotify", ['$rootScope', function($rootScope) {
   }
 }]);
 
-swl.directive("dragToFile", function(watchListService) {
+angular.module('swl').directive("dragToFile", function(watchListService) {
   return {
     restrict: 'A',
     link: function(scope, element, attrs)  {

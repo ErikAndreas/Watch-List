@@ -1,166 +1,6 @@
 'use strict';
-swl.factory('lastFMService', function($http,$q,swlSettings) {
-  var lastFMService = {
-    // http://stackoverflow.com/questions/12505760/angularjs-processing-http-response-in-service
-    getNews: function(un) {
-      var findings = [];
-      console.log(swlSettings);
-      // $http returns a promise, which has a then function, which also returns a promise
-      var p1 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=1&user='+un+'&api_key='+swlSettings.lastFMapiKey);
-      var p2 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=0&user='+un+'&api_key='+swlSettings.lastFMapiKey);
-      var promise = $q.all([p1,p2]).then(function(d){
-        // d will contain array of responses
-        // The then function here is an opportunity to modify the response
-        for (var i = 0; i < d.length; i++) {
-          for (var j = 0; d[i].data.albums && d[i].data.albums.album && j < d[i].data.albums.album.length; j++) {
-            findings.push({'artist':d[i].data.albums.album[j].artist.name,'album':d[i].data.albums.album[j].name,'image':d[i].data.albums.album[j].image[2]['#text']});
-          }
-        }
-        console.log(findings);
-        // The return value gets picked up by the then in the controller
-        return findings;
-      });
-      console.log(promise);
-      // Return the promise to the controller
-      return promise;
-    },
-    albumCover: function(artist, album, callback,ref) {
-      $http.get('http://ws.audioscrobbler.com/2.0/?method=album.getInfo&format=json&artist='+artist.replace(/&/g,'%26')+'&album='+album.replace(/&/g,'%26')+'&api_key='+swlSettings.lastFMapiKey).success(function(data) {
-        var img = {};
-        if (data.album && data.album.image[2]["#text"].length > 0) {
-          img = data.album.image[2]["#text"];
-        } else {
-          img = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_large.png';
-        }
-        if (callback) {
-          callback(img, ref);
-        }
-      });
-    },
-  };
-  return lastFMService;
-});
 
-swl.factory('spotifyService', function($http) {
-  var spotifyService = {
-    shouldMemoize: true,
-    // memoize calls
-    newsMem: {},
-    aaMem: {},
-    userCountry: 'SE',
-    lookupArtistAlbums: function(artist,album,img,callback,ref) {
-      var aral = {'ar':artist,'al':album,'img':img};
-      if (spotifyService.shouldMemoize && spotifyService.aaMem[artist+'_'+album]) { 
-        //console.log('spotify memoize hit for '+artist+'_'+album);
-        callback(spotifyService.aaMem[artist+'_'+album], artist, album,img,ref);
-      } else {
-        $http.get('http://ws.spotify.com/search/1/album.json?q='+album.replace(/&/g,'%26')+'%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
-          var findings = [];
-          if (data.info.num_results > 0) {
-            for (var j = 0; j < data.albums.length; j++) {  
-              if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase()
-                && spotifyService.checkAvail(data.albums[j].availability.territories)          
-                ) {         
-                findings.push({
-                  'artist':data.albums[j].artists[0].name,
-                  'album':data.albums[j].name,
-                  'href':data.albums[j].href,
-                  'img':aral.img
-                });
-              }
-            }
-          }
-          if (spotifyService.shouldMemoize) {
-            spotifyService.aaMem[artist+'_'+album] = findings;
-          }
-          //console.log(findings);
-          callback(findings, aral.ar, aral.al,aral.img,ref);
-        });
-      }
-    },
-    lookupNews:function(artist,callback,i,ignoreReleaseList) {
-      if (spotifyService.shouldMemoize && spotifyService.newsMem[artist]) { 
-        //console.log('spotify memoize hit for '+artist);     
-        callback(spotifyService.newsMem[artist],i,ignoreReleaseList);
-      } else {
-        $http.get('http://ws.spotify.com/search/1/album.json?q=tag:new%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
-          var findings = [];
-          if (data.info.num_results > 0) {
-            for (var j = 0; j < data.albums.length; j++) {
-              if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase() &&
-                spotifyService.checkAvail(data.albums[j].availability.territories) &&
-                !spotifyService.shouldIgnore(ignoreReleaseList,data.albums[j].href)) {
-                findings.push({
-                  'artist':data.albums[j].artists[0].name,
-                  'album':data.albums[j].name,
-                  'href':data.albums[j].href
-                });
-              }
-            }
-          }
-          if (spotifyService.shouldMemoize) {
-            spotifyService.newsMem[artist] = findings;
-          }
-          if (callback) {
-            callback(findings,i,ignoreReleaseList);
-          }
-        });
-      }
-    },
-    lookupArtist:function(uri, callback) {
-      //console.log('checking ' + uri);
-      $http.get('http://ws.spotify.com/lookup/1/.json?uri='+uri).success(function(data) {
-        //console.log(data);
-        if (data.artist) {
-          callback(data.artist.name);
-        }
-        else if (data.album) {
-          callback(data.album.artist, data.album.name);
-        }
-      }).
-      error(function(data, status, headers, config) {
-        console.log('fail',data, status);
-      });
-    },
-    checkAvail: function(cs) {
-      return cs.indexOf(spotifyService.userCountry) >= 0 || cs == 'worldwide';
-    },
-    shouldIgnore: function(ignoreReleaseList,href) {
-      for (var i = 0; ignoreReleaseList && i < ignoreReleaseList.length; i++) {
-        if (href && ignoreReleaseList[i].toLowerCase() == href.toLowerCase()) {
-          console.log('ignoring release ' + href);
-          return true;
-        }
-      }
-      return false;
-    }
-  }
-  return spotifyService;
-});
-
-swl.factory('storeService',function(){
-  var storeService = {
-    local:{getItem:function(){}},
-    remote:{}
-  };
-  return storeService;
-});
-
-swl.factory('lsAdaptorService',function() {
-  return {
-    getItem:function(key) {
-      return localStorage.getItem(key);
-    },
-    setItem:function(key, val) {
-      localStorage.setItem(key, val);
-    },
-    remove:function(key) {
-      localStorage.removeItem(key);
-    }
-  }
-});
-
-swl.factory('watchListService',function(storeService) {
+angular.module('swl').factory('watchListService',function(storeService) {
   var watchListService = {
     // model to persist (local and remote)
     data: {
@@ -171,6 +11,7 @@ swl.factory('watchListService',function(storeService) {
     },
     tSync:{},
     getData:function(){
+      console.log('wls getData');
       var d = storeService.local.getItem('WL-data');
       if (d) {
         watchListService.data = JSON.parse(d);
@@ -228,7 +69,7 @@ swl.factory('watchListService',function(storeService) {
   return watchListService;
 });
 
-swl.factory('artistNewsModelService',function(watchListService,spotifyService,lastFMService,statusService){
+angular.module('swl').factory('artistNewsModelService',function(watchListService,spotifyService,lastFMService,statusService,swlSettings){
   var artistNewsModelService = {
     // in-memory model
     artistNewsModel: {
@@ -247,7 +88,7 @@ swl.factory('artistNewsModelService',function(watchListService,spotifyService,la
           for (var j=0;j<findings.length;j++) {
             //console.log(artistNewsFindings);
             artistNewsModelService.artistNewsModel.artistNewsFindings.push(findings[j]);
-            lastFMService.albumCover(findings[j].artist, findings[j].album,function(img, k){
+            lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,function(img, k){
               if (img && img.length > 0) {
                 //console.log(img, k);
                 artistNewsModelService.artistNewsModel.artistNewsFindings[k-1].img=img;
@@ -294,7 +135,7 @@ swl.factory('artistNewsModelService',function(watchListService,spotifyService,la
   return artistNewsModelService;
 });
 
-swl.factory('artistAlbumModelService',function(watchListService,spotifyService,lastFMService,statusService){
+angular.module('swl').factory('artistAlbumModelService',function(watchListService,spotifyService,lastFMService,statusService,swlSettings){
   var artistAlbumModelService = {
     // in-memory model
     artistAlbumModel: {
@@ -314,7 +155,7 @@ swl.factory('artistAlbumModelService',function(watchListService,spotifyService,l
           for (var j=0;j<findings.length;j++) {
             //console.log(artistNewsFindings);
             artistAlbumModelService.artistAlbumModel.artistAlbumsFindings.push(findings[j]);
-            lastFMService.albumCover(findings[j].artist, findings[j].album,function(img, k){
+            lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,function(img, k){
               if (img && img.length > 0) {
                 //console.log(img, k);
                 artistAlbumModelService.artistAlbumModel.artistAlbumsFindings[k-1].img=img;
@@ -356,7 +197,7 @@ swl.factory('artistAlbumModelService',function(watchListService,spotifyService,l
   return artistAlbumModelService;
 });
 
-swl.factory('statusService',function($timeout) {
+angular.module('swl').factory('statusService',function($timeout) {
   var statusService = {
     statuses:[],
     add:function(type,msg) {
@@ -371,97 +212,46 @@ swl.factory('statusService',function($timeout) {
   return statusService;
 });
 
-swl.factory('rsService',function(storeService) {
-  var rsService = {
-    key:storeService.local.getItem('RS.userAddress'),
-    category:'music',
-    auth:function(userAddress) {
-      remoteStorage.getStorageInfo(userAddress, function(err, storageInfo) {
-        if (!err) {
-          // save storageInfo obj
-          rsService.key = userAddress;
-          storeService.local.setItem('RS.userAddress',userAddress);
-          storeService.local.setItem('RS.userStorageInfo', angular.toJson(storageInfo));
-          console.log('pathname ' + location.pathname.substring(0,location.pathname.lastIndexOf('/')));
-          //var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '/receiveToken.html';
-          var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '';
-          console.log('will open ' + redirectUri + ' for oauth dance');
-          var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [rsService.category+':rw'], redirectUri);
-          console.log(oauthPage);
-          location.href = oauthPage;
-        } else {        
-          console.log(err);
-        }
-      });
-    },
-    getItem:function(callback) {
-      var token = storeService.local.getItem('RS.token');
-      var key = storeService.local.getItem('RS.userAddress');
-      console.log('tryin remote get for ' + key + ' using token ' + token);
-      var storageInfo = JSON.parse(storeService.local.getItem('RS.userStorageInfo'));
-      if (storageInfo) {
-        var client = remoteStorage.createClient(storageInfo,rsService.category+'/SWL', token);
-        // TODO: check err == 401 -> session expired, if (err) -> path not found, data == undefined -> no data on path
-        client.get(key, function(err, data) { 
-          callback(data,err);
-        });
-      } else {
-        callback(null,'no storageInfo, connect again');
-      }
-    },
-    setItem:function(value, callback) {
-      var token = storeService.local.getItem('RS.token');
-      var key = storeService.local.getItem('RS.userAddress');
-      console.log('tryin remote set for ' + key + ' using token ' + token);
-      var storageInfo = JSON.parse(storeService.local.getItem('RS.userStorageInfo'));
-      var client = remoteStorage.createClient(storageInfo, rsService.category+'/SWL', token);
-      // TODO: check err == 401 -> session expired, if (err) -> path not found, data == undefined -> no data on path
-      client.put(key, value, function(err) { 
-        callback(err);
-      });   
-    }
-  };
-  return rsService;
-});
-
-swl.factory('remoteCheckService',function(storeService,statusService,watchListService) {
+angular.module('swl').factory('remoteCheckService',function(storeService,statusService,watchListService) {
   var remoteCheckService = {
     checkForData:function() {
       storeService.remote.getItem(function(data,err){
-      if (401 == err) {
-        statusService.add('error','Session expired, connect again: ' + err);
-      } else if (err) {
-        statusService.add('error','Path not found ' + err);
-      } else {
-        if (data) {
-          data = JSON.parse(data);
-          console.log('remote data',data);
-          // compare remote updatedAt w local d.updatedAt - if remote newer update local
-          var remoteD = Date.parse(data.updatedAt);
-          console.log('remote date',data.updatedAt,remoteD);
-          var localD = Date.parse(watchListService.getData().updatedAt);
-          if (isNaN(localD)) localD = 0;
-          console.log('local date',localD);
-          if (remoteD > localD) {
-            console.log('remote newer, updating');
-            watchListService.data = data;
-            watchListService.data.updatedAt = data.updatedAt;
-            storeService.local.setItem('WL-data',angular.toJson(watchListService.data));
-          } 
+        if (401 == err) {
+          statusService.add('error','Session expired, connect again: ' + err);
+        } else if (err) {
+          statusService.add('error','Path not found ' + err);
         } else {
-          statusService.add('error','No data available');
+          if (data) {
+            data = JSON.parse(data);
+            console.log('remote data',data);
+            // compare remote updatedAt w local d.updatedAt - if remote newer update local
+            var remoteD = Date.parse(data.updatedAt);
+            console.log('remote date',data.updatedAt,remoteD);
+            var localD = Date.parse(watchListService.getData().updatedAt);
+            if (isNaN(localD)) localD = 0;
+            console.log('local date',localD);
+            if (remoteD > localD) {
+              console.log('remote newer, updating');
+              //watchListService.data = data;
+              //watchListService.data.updatedAt = data.updatedAt;
+              //storeService.local.setItem('WL-data',angular.toJson(watchListService.data));
+              storeService.local.setItem('WL-data',angular.toJson(data));
+              // need some magic here to kick the bindings and update ui, we're out of angular scope here...
+            } 
+          } else {
+            statusService.add('error','No data available');
+          }
         }
-      }
-    });
+      });
     }
   };
   return remoteCheckService;
 });
 
-swl.factory('lastFMOnSpotifyService',function(lastFMService,spotifyService){
+angular.module('swl').factory('lastFMOnSpotifyService',function(lastFMService,spotifyService,swlSettings){
   var lastFMOnSpotifyService = {
     getSuggsOnSpot:function(un, callback) {  
-      lastFMService.getNews(un).then(function(d) {
+      lastFMService.getNews(swlSettings.lastFMapiKey,un).then(function(d) {
         var onSpot = [];
         var suggs = [];
         for (var i = 0; i < d.length; i++) {

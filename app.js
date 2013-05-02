@@ -1,10 +1,14 @@
 'use strict';
-var swl = angular.module('swl', function($httpProvider){	
-	// https://github.com/angular/angular.js/pull/1454
-	//delete $httpProvider.defaults.headers.common["X-Requested-With"]
-});
+/*
+on modules 
+http://sravi-kiran.blogspot.se/2013/02/ModulesInAngularJS.html
+http://briantford.com/blog/huuuuuge-angular-apps.html
+http://cliffmeyers.com/blog/2013/4/21/code-organization-angularjs-javascript
+*/
 
-swl.config(function($routeProvider,$compileProvider) {
+angular.module('swl', ['store','spotify','lastfm']);
+
+angular.module('swl').config(function($routeProvider,$compileProvider) {
 	$routeProvider.
 		when('/home', {templateUrl: 'partials/home.html',   controller: 'LastFMCtrl'}).
 		when('/news', {templateUrl: 'partials/news.html', controller: 'NewsCtrl'}).
@@ -14,11 +18,11 @@ swl.config(function($routeProvider,$compileProvider) {
 	$compileProvider.urlSanitizationWhitelist(/^\s*(https?|spotify):/);
 });
 
-swl.value('swlSettings',{
+angular.module('swl').value('swlSettings',{
 		lastFMapiKey:'00198b31b392d0750f88819830e49680'
 });
 
-swl.run(function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService){
+angular.module('swl').run(function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService){
 	console.log('swl.run');
 	storeService.local = lsAdaptorService;
 	storeService.remote = rsService;
