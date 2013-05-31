@@ -23,7 +23,7 @@
 
 <div class="container">
   <div ng-controller="StatusController" class="status-fixed">
-    <div ng-repeat="status in statuses" ng-class="status.type">
+    <div ng-repeat="status in statuses" ng-class="status.type" ng-cloak>
       {{status.msg}}
     </div>
   </div>
