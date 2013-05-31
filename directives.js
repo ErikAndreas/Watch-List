@@ -92,7 +92,9 @@ angular.module('swl').directive("dragToFile", function(watchListService) {
       element.bind('dragstart', function(evt) {
         console.log('dragstart',element.val());
         var d = watchListService.dformat();
-        evt.dataTransfer.setData("DownloadURL", "text/plain; charset=UTF-8:WatchList.backup."+d+".txt:data:image/png;base64," + btoa(element.val()));
+        // see http://ecmanaut.blogspot.se/2006/07/encoding-decoding-utf8-in-javascript.html
+        //evt.dataTransfer.setData("DownloadURL", "text/plain; charset=UTF-8:WatchList.backup."+d+".txt:data:image/png;base64," + btoa(element.val()));
+        evt.dataTransfer.setData("DownloadURL", "text/plain; charset=UTF-8:WatchList.backup."+d+".txt:data:image/png;base64," + btoa(unescape(encodeURIComponent(element.val()))));
       });
   	}
   }
