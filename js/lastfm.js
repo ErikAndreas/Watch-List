@@ -1,4 +1,4 @@
-'use strict';
+
 angular.module('lastfm',[]);
 angular.module('lastfm').factory('lastFMService', function($http,$q) {
   var lastFMService = {

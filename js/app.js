@@ -1,4 +1,3 @@
-'use strict';
 /*
 on modules 
 http://sravi-kiran.blogspot.se/2013/02/ModulesInAngularJS.html
@@ -27,7 +26,7 @@ angular.module('swl').run(function($rootScope,storeService,lsAdaptorService,rsSe
 	storeService.local = lsAdaptorService;
 	storeService.remote = rsService;
 	if (remoteStorage.receiveToken()) {
-		var token = remoteStorage.receiveToken()
+		var token = remoteStorage.receiveToken();
 		console.log('back from oauth, got token ',token);
 		storeService.local.setItem('RS.token',token);
 	}

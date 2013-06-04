@@ -1,0 +1,12 @@
+{
+  "name": "swl",
+  "version": "0.6.0",
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-sass": "~0.3.0"
+  }
+}

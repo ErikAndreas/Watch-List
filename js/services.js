@@ -1,4 +1,4 @@
-'use strict';
+
 
 angular.module('swl').factory('watchListService',function(storeService) {
   var watchListService = {
@@ -48,8 +48,8 @@ angular.module('swl').factory('watchListService',function(storeService) {
       var dd = date.getDate();
       var mm = date.getMonth() + 1;
       var yyyy = date.getFullYear();
-      if (dd < 10) {dd = '0' + dd}
-      if (mm < 10) {mm = '0' + mm}
+      if (dd < 10) {dd = '0' + dd;}
+      if (mm < 10) {mm = '0' + mm;}
       return yyyy + '-' + mm + '-' + dd;
     },
     // remote is stored as string, callback need to parse to json
@@ -80,25 +80,27 @@ angular.module('swl').factory('artistNewsModelService',function(watchListService
     },
     populate:function(){
       artistNewsModelService.artistNewsModel.artistNewsFindings = [];
-      for (var i = 0; i < artistNewsModelService.artistNewsModel.news.length; i++) {
-        spotifyService.lookupNews(artistNewsModelService.artistNewsModel.news[i].artist,function(findings,i,ignoreReleaseList) {
+      var imageHandler = function(img, k){
+        if (img && img.length > 0) {
+          //console.log(img, k);
+          artistNewsModelService.artistNewsModel.artistNewsFindings[k-1].img=img;
+        }
+      };
+      var handler = function(findings,i,ignoreReleaseList) {
         if (findings && findings.length > 0) {
           //console.log(findings,i);
           artistNewsModelService.artistNewsModel.imgs[i] = 'img/spotify32bw.png';      
           for (var j=0;j<findings.length;j++) {
             //console.log(artistNewsFindings);
             artistNewsModelService.artistNewsModel.artistNewsFindings.push(findings[j]);
-            lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,function(img, k){
-              if (img && img.length > 0) {
-                //console.log(img, k);
-                artistNewsModelService.artistNewsModel.artistNewsFindings[k-1].img=img;
-              }
-            },artistNewsModelService.artistNewsModel.artistNewsFindings.length);       
+            lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,imageHandler,artistNewsModelService.artistNewsModel.artistNewsFindings.length);       
           }
         } else {
           artistNewsModelService.artistNewsModel.imgs[i] = 'img/delete-32.png';
         }
-        },i,artistNewsModelService.artistNewsModel.ignoreReleaseList);
+      };
+      for (var i = 0; i < artistNewsModelService.artistNewsModel.news.length; i++) {
+        spotifyService.lookupNews(artistNewsModelService.artistNewsModel.news[i].artist,handler,i,artistNewsModelService.artistNewsModel.ignoreReleaseList);
       }
     },
     addNews:function(a) { 
@@ -145,27 +147,29 @@ angular.module('swl').factory('artistAlbumModelService',function(watchListServic
     },
     populate:function(){
       artistAlbumModelService.artistAlbumModel.artistAlbumsFindings = [];
-      for (var i = 0; i < artistAlbumModelService.artistAlbumModel.artistAlbums.length; i++) {
-        // meth: artist,album,img,callback,ref
-        // callback: findings, artist, album,img,ref
-        spotifyService.lookupArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums[i].artist,artistAlbumModelService.artistAlbumModel.artistAlbums[i].album,'',function(findings,artist,album,img,i) {
+      var imageHandler = function(img, k){
+        if (img && img.length > 0) {
+          //console.log(img, k);
+          artistAlbumModelService.artistAlbumModel.artistAlbumsFindings[k-1].img=img;
+        }
+      };
+      var handler = function(findings,artist,album,img,i) {
         if (findings && findings.length > 0) {
           //console.log(findings,i);
           artistAlbumModelService.artistAlbumModel.imgs[i] = 'img/spotify32bw.png';      
           for (var j=0;j<findings.length;j++) {
             //console.log(artistNewsFindings);
             artistAlbumModelService.artistAlbumModel.artistAlbumsFindings.push(findings[j]);
-            lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,function(img, k){
-              if (img && img.length > 0) {
-                //console.log(img, k);
-                artistAlbumModelService.artistAlbumModel.artistAlbumsFindings[k-1].img=img;
-              }
-            },artistAlbumModelService.artistAlbumModel.artistAlbumsFindings.length);       
+            lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,imageHandler,artistAlbumModelService.artistAlbumModel.artistAlbumsFindings.length);       
           }
         } else {
           artistAlbumModelService.artistAlbumModel.imgs[i] = 'img/delete-32.png';
         }
-        },i);
+      };
+      for (var i = 0; i < artistAlbumModelService.artistAlbumModel.artistAlbums.length; i++) {
+        // meth: artist,album,img,callback,ref
+        // callback: findings, artist, album,img,ref
+        spotifyService.lookupArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums[i].artist,artistAlbumModelService.artistAlbumModel.artistAlbums[i].album,'',handler,i);
       }
     },
     addArtistAlbum:function(ar,al) {  
@@ -193,7 +197,7 @@ angular.module('swl').factory('artistAlbumModelService',function(watchListServic
       }
       return false;
     }
-  }
+  };
   return artistAlbumModelService;
 });
 
@@ -254,27 +258,28 @@ angular.module('swl').factory('lastFMOnSpotifyService',function(lastFMService,sp
       lastFMService.getNews(swlSettings.lastFMapiKey,un).then(function(d) {
         var onSpot = [];
         var suggs = [];
-        for (var i = 0; i < d.length; i++) {
-          spotifyService.lookupArtistAlbums(d[i].artist,d[i].album, d[i].image, function(r,artist, album,img){
-            if (r.length > 0) {
-              for (var i = 0; i < r.length;i++) {
-                console.log('onSpot ' , r[i].artist, r[i].album,r[i].img,r[i].href);
-                onSpot.push({
-                          'artist': r[i].artist,
-                          'album':r[i].album,
-                          'href':r[i].href,
-                          'img':r[i].img
-                        });
-              }
-            } else {
-              console.log('sugg' , artist, album,img);
-              suggs.push({
-                        'artist': artist,
-                        'album':album,
-                        'img':img
-                    });
+        var handler = function(r,artist, album,img) {
+          if (r.length > 0) {
+            for (var i = 0; i < r.length;i++) {
+              console.log('onSpot ' , r[i].artist, r[i].album,r[i].img,r[i].href);
+              onSpot.push({
+                'artist': r[i].artist,
+                'album':r[i].album,
+                'href':r[i].href,
+                'img':r[i].img
+              });
             }
-          });
+          } else {
+            console.log('sugg' , artist, album,img);
+            suggs.push({
+              'artist': artist,
+              'album':album,
+              'img':img
+            });
+          }
+        };
+        for (var i = 0; i < d.length; i++) {
+          spotifyService.lookupArtistAlbums(d[i].artist,d[i].album, d[i].image, handler);
         }
         callback(suggs, onSpot);
       });

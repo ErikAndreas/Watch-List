@@ -1,4 +1,4 @@
-'use strict';
+
 angular.module('store',[]);
 angular.module('store').factory('storeService',function(){
   var storeService = {
@@ -19,7 +19,7 @@ angular.module('store').factory('lsAdaptorService',function() {
     remove:function(key) {
       localStorage.removeItem(key);
     }
-  }
+  };
 });
 
 angular.module('store').factory('rsService',function(storeService) {

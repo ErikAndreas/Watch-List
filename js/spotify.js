@@ -1,4 +1,4 @@
-'use strict';
+
 angular.module('spotify',[]);
 angular.module('spotify').factory('spotifyService', function($http) {
   var spotifyService = {
@@ -17,8 +17,8 @@ angular.module('spotify').factory('spotifyService', function($http) {
           var findings = [];
           if (data.info.num_results > 0) {
             for (var j = 0; j < data.albums.length; j++) {  
-              if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase()
-                && spotifyService.checkAvail(data.albums[j].availability.territories)          
+              if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase() &&
+                spotifyService.checkAvail(data.albums[j].availability.territories)          
                 ) {         
                 findings.push({
                   'artist':data.albums[j].artists[0].name,
@@ -93,6 +93,6 @@ angular.module('spotify').factory('spotifyService', function($http) {
       }
       return false;
     }
-  }
+  };
   return spotifyService;
 });
