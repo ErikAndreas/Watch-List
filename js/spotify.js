@@ -1,6 +1,6 @@
 
 angular.module('spotify',[]);
-angular.module('spotify').factory('spotifyService', function($http) {
+angular.module('spotify').factory('spotifyService', ['$http',function($http) {
   var spotifyService = {
     shouldMemoize: true,
     // memoize calls
@@ -95,4 +95,4 @@ angular.module('spotify').factory('spotifyService', function($http) {
     }
   };
   return spotifyService;
-});
+}]);

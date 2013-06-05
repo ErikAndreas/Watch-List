@@ -1,14 +1,14 @@
 
 angular.module('store',[]);
-angular.module('store').factory('storeService',function(){
+angular.module('store').factory('storeService',[function(){
   var storeService = {
     local:{getItem:function(){}},
     remote:{}
   };
   return storeService;
-});
+}]);
 
-angular.module('store').factory('lsAdaptorService',function() {
+angular.module('store').factory('lsAdaptorService',[function() {
   return {
     getItem:function(key) {
       return localStorage.getItem(key);
@@ -20,9 +20,9 @@ angular.module('store').factory('lsAdaptorService',function() {
       localStorage.removeItem(key);
     }
   };
-});
+}]);
 
-angular.module('store').factory('rsService',function(storeService) {
+angular.module('store').factory('rsService',['storeService',function(storeService) {
   var rsService = {
     key:storeService.local.getItem('RS.userAddress'),
     category:'music',
@@ -73,4 +73,4 @@ angular.module('store').factory('rsService',function(storeService) {
     }
   };
   return rsService;
-});
+}]);

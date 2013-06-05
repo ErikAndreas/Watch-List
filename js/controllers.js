@@ -1,5 +1,5 @@
 
-angular.module('swl').controller('LastFMCtrl', function LastFMCtrl($scope,lastFMOnSpotifyService,storeService,artistAlbumModelService) {
+angular.module('swl').controller('LastFMCtrl', ['$scope','lastFMOnSpotifyService','storeService','artistAlbumModelService',function LastFMCtrl($scope,lastFMOnSpotifyService,storeService,artistAlbumModelService) {
     if (storeService.local.getItem('lastFMuserName')) {
         $scope.lastFMuserName = storeService.local.getItem('lastFMuserName');
         lastFMOnSpotifyService.getSuggsOnSpot($scope.lastFMuserName,function(suggs, onSpot) {
@@ -20,9 +20,9 @@ angular.module('swl').controller('LastFMCtrl', function LastFMCtrl($scope,lastFM
         console.log('add ' +ar + " - " + al);
         artistAlbumModelService.addArtistAlbum(ar,al);
     };
-});
+}]);
 
-angular.module('swl').controller('NewsCtrl',function NewsCtrl($scope,artistNewsModelService) {
+angular.module('swl').controller('NewsCtrl',['$scope','artistNewsModelService',function NewsCtrl($scope,artistNewsModelService) {
     $scope.artistNewsModel = artistNewsModelService.artistNewsModel;
     artistNewsModelService.populate();
 
@@ -43,9 +43,9 @@ angular.module('swl').controller('NewsCtrl',function NewsCtrl($scope,artistNewsM
     $scope.addIgnore = function(href) {
         artistNewsModelService.addIgnore(href);
     };
-});
+}]);
 
-angular.module('swl').controller('AlbumsCtrl',function AlbumsCtrl($scope, artistAlbumModelService){
+angular.module('swl').controller('AlbumsCtrl',['$scope', 'artistAlbumModelService',function AlbumsCtrl($scope, artistAlbumModelService){
     $scope.artistAlbumModel = artistAlbumModelService.artistAlbumModel;
     artistAlbumModelService.populate();
     //console.log($scope);
@@ -63,9 +63,9 @@ angular.module('swl').controller('AlbumsCtrl',function AlbumsCtrl($scope, artist
     $scope.rm = function(idx) {
         artistAlbumModelService.rmArtistAlbum(idx);
     };
-});
+}]);
 
-angular.module('swl').controller('SettingsCtrl',function SettingsCtrl($scope,$rootScope,rsService,watchListService,statusService){
+angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsService','watchListService','statusService',function SettingsCtrl($scope,$rootScope,rsService,watchListService,statusService){
     
     $scope.auth = function() {
         rsService.auth($scope.mUserAddress);
@@ -91,7 +91,7 @@ angular.module('swl').controller('SettingsCtrl',function SettingsCtrl($scope,$ro
         $scope.mImport = fc;
         $scope.$apply();
     });
-});
+}]);
 
 angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService', function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
     $scope.isActive = function(route) {
@@ -112,6 +112,6 @@ angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope'
     });
 }]);
 
-angular.module('swl').controller('StatusController',function StatusController($scope, statusService) {  
+angular.module('swl').controller('StatusController',['$scope', 'statusService',function StatusController($scope, statusService) {  
     $scope.statuses = statusService.statuses;
-});
+}]);

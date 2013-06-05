@@ -14,8 +14,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint']
+      files: ['<%= jshint.files %>','css/sass/*.scss'],
+      tasks: ['jshint','sass']
     },
     sass: {
       dist: {
@@ -24,37 +24,42 @@ module.exports = function(grunt) {
         }
       }
     },
-    concat: {
-      options: {
-        separator: '\n'
-      },
-      js: {
-        src: ['js/**/*.js'],
-        dest: 'dist/<%= pkg.name %>.js'
-      },
-      css: {
-        src: ['css/*.css'],
-        dest: 'dist/<%= pkg.name %>.css'
+    copy: {
+      dist: {
+        files: [
+          {expand:true, src: 'partials/*',dest: 'dist'},
+          {expand:true, src: 'img/*',dest: 'dist'},
+          {expand:true, src: 'css/*',dest: 'dist'},
+          {expand:true, src: 'js/**',dest: 'dist'},
+          {src: 'index.html',dest: 'dist/'}
+        ]
       }
     },
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
-      dist: {
-        files: {
-          'dist/<%= pkg.name %>.min.js': ['<%= concat.js.dest %>']
-        }
-      }
+    clean: {
+      src: ['dist'],
+      post: [
+        "dist/css/**/*",
+        "!dist/css/swl.css",
+        "dist/js/*.js",
+        "!dist/js/swl.min.js",
+      ]
+    },
+    useref: {
+      // specify which files contain the build blocks
+      html: 'dist/index.html',
+      temp: 'dist'
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-useref'); // using this also loads grunt-contrib-concat, grunt-contrib-uglify and grunt-css
+  // grunt.loadNpmTasks('grunt-contrib-uglify');
+  // grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   grunt.registerTask('default', ['jshint', 'sass']);
-  grunt.registerTask('dist', ['jshint','sass','concat','uglify']);
+  grunt.registerTask('dist', ['jshint','sass','clean:src','copy','useref','concat','uglify','cssmin','clean:post']);
 };

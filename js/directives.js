@@ -79,7 +79,7 @@ angular.module('swl').directive("dropFromSpotify", ['$rootScope', function($root
   };
 }]);
 
-angular.module('swl').directive("dragToFile", function(watchListService) {
+angular.module('swl').directive("dragToFile", ['watchListService',function(watchListService) {
   return {
     restrict: 'A',
     link: function(scope, element, attrs)  {
@@ -96,4 +96,4 @@ angular.module('swl').directive("dragToFile", function(watchListService) {
       });
     }
   };
-});
+}]);

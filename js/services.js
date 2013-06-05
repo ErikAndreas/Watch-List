@@ -1,6 +1,6 @@
 
 
-angular.module('swl').factory('watchListService',function(storeService) {
+angular.module('swl').factory('watchListService',['storeService',function(storeService) {
   var watchListService = {
     // model to persist (local and remote)
     data: {
@@ -67,9 +67,9 @@ angular.module('swl').factory('watchListService',function(storeService) {
     }
   };
   return watchListService;
-});
+}]);
 
-angular.module('swl').factory('artistNewsModelService',function(watchListService,spotifyService,lastFMService,statusService,swlSettings){
+angular.module('swl').factory('artistNewsModelService',['watchListService','spotifyService','lastFMService','statusService','swlSettings',function(watchListService,spotifyService,lastFMService,statusService,swlSettings){
   var artistNewsModelService = {
     // in-memory model
     artistNewsModel: {
@@ -135,9 +135,9 @@ angular.module('swl').factory('artistNewsModelService',function(watchListService
     }
   };
   return artistNewsModelService;
-});
+}]);
 
-angular.module('swl').factory('artistAlbumModelService',function(watchListService,spotifyService,lastFMService,statusService,swlSettings){
+angular.module('swl').factory('artistAlbumModelService',['watchListService','spotifyService','lastFMService','statusService','swlSettings',function(watchListService,spotifyService,lastFMService,statusService,swlSettings){
   var artistAlbumModelService = {
     // in-memory model
     artistAlbumModel: {
@@ -199,9 +199,9 @@ angular.module('swl').factory('artistAlbumModelService',function(watchListServic
     }
   };
   return artistAlbumModelService;
-});
+}]);
 
-angular.module('swl').factory('statusService',function($timeout) {
+angular.module('swl').factory('statusService',['$timeout',function($timeout) {
   var statusService = {
     statuses:[],
     add:function(type,msg) {
@@ -214,9 +214,9 @@ angular.module('swl').factory('statusService',function($timeout) {
     }
   };
   return statusService;
-});
+}]);
 
-angular.module('swl').factory('remoteCheckService',function(storeService,statusService,watchListService) {
+angular.module('swl').factory('remoteCheckService',['storeService','statusService','watchListService',function(storeService,statusService,watchListService) {
   var remoteCheckService = {
     checkForData:function() {
       storeService.remote.getItem(function(data,err){
@@ -250,9 +250,9 @@ angular.module('swl').factory('remoteCheckService',function(storeService,statusS
     }
   };
   return remoteCheckService;
-});
+}]);
 
-angular.module('swl').factory('lastFMOnSpotifyService',function(lastFMService,spotifyService,swlSettings){
+angular.module('swl').factory('lastFMOnSpotifyService',['lastFMService','spotifyService','swlSettings',function(lastFMService,spotifyService,swlSettings){
   var lastFMOnSpotifyService = {
     getSuggsOnSpot:function(un, callback) {  
       lastFMService.getNews(swlSettings.lastFMapiKey,un).then(function(d) {
@@ -286,4 +286,4 @@ angular.module('swl').factory('lastFMOnSpotifyService',function(lastFMService,sp
     }
   };
   return lastFMOnSpotifyService;
-});
+}]);

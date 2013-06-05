@@ -1,6 +1,6 @@
 
 angular.module('lastfm',[]);
-angular.module('lastfm').factory('lastFMService', function($http,$q) {
+angular.module('lastfm').factory('lastFMService', ['$http','$q',function($http,$q) {
   var lastFMService = {
     // http://stackoverflow.com/questions/12505760/angularjs-processing-http-response-in-service
     getNews: function(apiKey,un) {
@@ -39,4 +39,4 @@ angular.module('lastfm').factory('lastFMService', function($http,$q) {
     },
   };
   return lastFMService;
-});
+}]);
