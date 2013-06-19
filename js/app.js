@@ -5,7 +5,7 @@ http://briantford.com/blog/huuuuuge-angular-apps.html
 http://cliffmeyers.com/blog/2013/4/21/code-organization-angularjs-javascript
 */
 
-angular.module('swl', ['store','spotify','lastfm']);
+angular.module('swl', ['store','spotify','lastfm','lingua']);
 
 angular.module('swl').config(['$routeProvider','$compileProvider',function($routeProvider,$compileProvider) {
 	$routeProvider.
@@ -21,10 +21,12 @@ angular.module('swl').value('swlSettings',{
 		lastFMapiKey:'00198b31b392d0750f88819830e49680'
 });
 
-angular.module('swl').run(['$rootScope','storeService','lsAdaptorService','rsService','remoteCheckService',function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService){
+angular.module('swl').run(['$rootScope','storeService','lsAdaptorService','rsService','remoteCheckService','linguaService',function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService,linguaService){
 	console.log('swl.run');
 	storeService.local = lsAdaptorService;
 	storeService.remote = rsService;
+	$rootScope._ = linguaService._;
+    $rootScope._n = linguaService._n;
 	if (remoteStorage.receiveToken()) {
 		var token = remoteStorage.receiveToken();
 		console.log('back from oauth, got token ',token);

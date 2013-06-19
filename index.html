@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="swl">
+<html lang="en" xmlns:ng="http://angularjs.org">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -15,10 +15,10 @@
   <div id="header-fixed">
     <div ng-controller="navCtrl" id="menu" class="container">
     <ul id="menuItems">
-      <li ng-class="{selected:isActive('/home')}"><a href="#/home">Watch List</a></li>
-      <li ng-class="{selected:isActive('/news')}"><a drop-from-spotify href="#/news">News</a></li>
-      <li ng-class="{selected:isActive('/albums')}"><a href="#/albums">Albums</a></li>
-      <li ng-class="{selected:isActive('/settings')}"><a href="#/settings">Settings</a></li>
+      <li ng-class="{selected:isActive('/home')}"><a href="#/home">{{_("Watch List")}}</a></li>
+      <li ng-class="{selected:isActive('/news')}"><a drop-from-spotify href="#/news">{{_("News")}}</a></li>
+      <li ng-class="{selected:isActive('/albums')}"><a href="#/albums">{{_("Albums")}}</a></li>
+      <li ng-class="{selected:isActive('/settings')}"><a href="#/settings">{{_("Settings")}}</a></li>
     </div>
   </div>
 
@@ -33,7 +33,7 @@
   <div ng-view></div>
 
 </div>  
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
   <!-- build:js js/<%= grunt.file.readJSON('package.json').name %>.min.js -->
   <script src="js/app.js"></script>
   <script src="js/controllers.js"></script>
@@ -42,8 +42,36 @@
   <script src="js/store.js"></script>
   <script src="js/spotify.js"></script>
   <script src="js/lastfm.js"></script>
+  <script src="js/lingua.js"></script>
   <!-- endbuild -->  
+  <script src="js/vendor/jed.js"></script>
+  <script src="js/vendor/microajax.js"></script>
   <script src="js/vendor/remoteStorage.js"></script>
-  
+  <script>
+  angular.element(document).ready(function() {
+    console.log('angular doc ready');
+    var locale = localStorage.getItem('locale');
+    console.log(locale);
+    if (locale) {
+      //document.write("\x3Cscript src=\"//code.angularjs.org/1.1.5/i18n/angular-locale_"+locale+".js\">\x3C/script>");
+    } else {
+      locale = "en-us";
+    }
+    microAjax('l_'+locale+'.json',function(data) {
+      data = JSON.parse(data);
+      var i18n = new Jed({
+        "domain" : locale,
+        "missing_key_callback" : function(key) {
+            console.error("Missing key " + key + " for " + locale);
+        },
+        locale_data : data
+      });
+      console.log(i18n);
+      window.i18n = i18n;
+      console.log('do bootstrap');
+      angular.bootstrap(document, ['swl']);
+    });
+  });
+  </script>
 </body>
 </html>

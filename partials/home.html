@@ -1,14 +1,14 @@
 <h2>Last.fm</h2>
-Your last.fm username:<br/>
-<input ng-model="lastFMuserName"/> <button ng-click="setLastFMuserName()">Set</button>
-<h3>Suggestions</h3>
+{{_("Your last.fm username")}}:<br/>
+<input ng-model="lastFMuserName"/> <button ng-click="setLastFMuserName()">{{_("Set")}}</button>
+<h3>{{_n("Suggestion","Suggestions",suggs.length)}}</h3>
 <ul class="grid">
 	<li ng-repeat="album in suggs"><img class="albumCover" ng-src="{{album.img}}"/><br/>
-		<div class="artistAlbumGrid">{{album.artist}}<br/>{{album.album}}</div> <a href="" ng-click="addArtistAlbum(album.artist,album.album)">add</a>
+		<div class="artistAlbumGrid">{{album.artist}}<br/>{{album.album}}</div> <a href="" ng-click="addArtistAlbum(album.artist,album.album)">{{_("add")}}</a>
 	</li>
-</ul>
+</ul> 
 <div class="cleared"></div>
-<h3>On</h3>
+<h3>{{_("On")}}</h3>
 <ul class="grid">
 	<li ng-repeat="album in onSpot"><a href="{{album.href}}"><img class="albumCover" ng-src="{{album.img}}"/><br/>
 		<div class="artistAlbumGrid">{{album.artist}}<br/>{{album.album}}</div></a>
