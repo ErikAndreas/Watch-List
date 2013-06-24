@@ -1,5 +1,5 @@
 /*
-on modules 
+on modules
 http://sravi-kiran.blogspot.se/2013/02/ModulesInAngularJS.html
 http://briantford.com/blog/huuuuuge-angular-apps.html
 http://cliffmeyers.com/blog/2013/4/21/code-organization-angularjs-javascript
@@ -8,6 +8,7 @@ http://cliffmeyers.com/blog/2013/4/21/code-organization-angularjs-javascript
 angular.module('swl', ['store','spotify','lastfm','lingua']);
 
 angular.module('swl').config(['$routeProvider','$compileProvider',function($routeProvider,$compileProvider) {
+	"use strict";
 	$routeProvider.
 		when('/home', {templateUrl: 'partials/home.html',   controller: 'LastFMCtrl'}).
 		when('/news', {templateUrl: 'partials/news.html', controller: 'NewsCtrl'}).
@@ -22,6 +23,7 @@ angular.module('swl').value('swlSettings',{
 });
 
 angular.module('swl').run(['$rootScope','storeService','lsAdaptorService','rsService','remoteCheckService','linguaService',function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService,linguaService){
+	"use strict";
 	console.log('swl.run');
 	storeService.local = lsAdaptorService;
 	storeService.remote = rsService;

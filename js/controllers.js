@@ -1,6 +1,6 @@
 
 angular.module('swl').controller('LastFMCtrl', ['$scope','lastFMOnSpotifyService','storeService','artistAlbumModelService',function LastFMCtrl($scope,lastFMOnSpotifyService,storeService,artistAlbumModelService) {
-    
+    "use strict";
     if (storeService.local.getItem('lastFMuserName')) {
         $scope.lastFMuserName = storeService.local.getItem('lastFMuserName');
         lastFMOnSpotifyService.getSuggsOnSpot($scope.lastFMuserName,function(suggs, onSpot) {
@@ -24,6 +24,7 @@ angular.module('swl').controller('LastFMCtrl', ['$scope','lastFMOnSpotifyService
 }]);
 
 angular.module('swl').controller('NewsCtrl',['$scope','artistNewsModelService',function NewsCtrl($scope,artistNewsModelService) {
+    "use strict";
     $scope.artistNewsModel = artistNewsModelService.artistNewsModel;
     artistNewsModelService.populate();
 
@@ -47,6 +48,7 @@ angular.module('swl').controller('NewsCtrl',['$scope','artistNewsModelService',f
 }]);
 
 angular.module('swl').controller('AlbumsCtrl',['$scope', 'artistAlbumModelService',function AlbumsCtrl($scope, artistAlbumModelService){
+    "use strict";
     $scope.artistAlbumModel = artistAlbumModelService.artistAlbumModel;
     artistAlbumModelService.populate();
     //console.log($scope);
@@ -67,7 +69,7 @@ angular.module('swl').controller('AlbumsCtrl',['$scope', 'artistAlbumModelServic
 }]);
 
 angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsService','watchListService','statusService',function SettingsCtrl($scope,$rootScope,rsService,watchListService,statusService){
-    
+    "use strict";
     $scope.auth = function() {
         rsService.auth($scope.mUserAddress);
     };
@@ -95,6 +97,7 @@ angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsServic
 }]);
 
 angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService', function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
+    "use strict";
     $scope.isActive = function(route) {
         //console.log(route);
         return route === $location.path();
@@ -113,6 +116,7 @@ angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope'
     });
 }]);
 
-angular.module('swl').controller('StatusController',['$scope', 'statusService',function StatusController($scope, statusService) {  
+angular.module('swl').controller('StatusController',['$scope', 'statusService',function StatusController($scope, statusService) {
+    "use strict";
     $scope.statuses = statusService.statuses;
 }]);

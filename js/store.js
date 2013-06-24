@@ -1,6 +1,7 @@
 
 angular.module('store',[]);
 angular.module('store').factory('storeService',[function(){
+  "use strict";
   var storeService = {
     local:{getItem:function(){}},
     remote:{}
@@ -9,6 +10,7 @@ angular.module('store').factory('storeService',[function(){
 }]);
 
 angular.module('store').factory('lsAdaptorService',[function() {
+  "use strict";
   return {
     getItem:function(key) {
       return localStorage.getItem(key);
@@ -23,6 +25,7 @@ angular.module('store').factory('lsAdaptorService',[function() {
 }]);
 
 angular.module('store').factory('rsService',['storeService',function(storeService) {
+  "use strict";
   var rsService = {
     key:storeService.local.getItem('RS.userAddress'),
     category:'music',
@@ -40,7 +43,7 @@ angular.module('store').factory('rsService',['storeService',function(storeServic
           var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [rsService.category+':rw'], redirectUri);
           console.log(oauthPage);
           location.href = oauthPage;
-        } else {        
+        } else {
           console.log(err);
         }
       });
@@ -53,7 +56,7 @@ angular.module('store').factory('rsService',['storeService',function(storeServic
       if (storageInfo) {
         var client = remoteStorage.createClient(storageInfo,rsService.category+'/SWL', token);
         // TODO: check err == 401 -> session expired, if (err) -> path not found, data == undefined -> no data on path
-        client.get(key, function(err, data) { 
+        client.get(key, function(err, data) {
           callback(data,err);
         });
       } else {
@@ -67,9 +70,9 @@ angular.module('store').factory('rsService',['storeService',function(storeServic
       var storageInfo = JSON.parse(storeService.local.getItem('RS.userStorageInfo'));
       var client = remoteStorage.createClient(storageInfo, rsService.category+'/SWL', token);
       // TODO: check err == 401 -> session expired, if (err) -> path not found, data == undefined -> no data on path
-      client.put(key, value, function(err) { 
+      client.put(key, value, function(err) {
         callback(err);
-      });   
+      });
     }
   };
   return rsService;

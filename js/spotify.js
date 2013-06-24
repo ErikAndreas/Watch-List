@@ -1,6 +1,7 @@
 
 angular.module('spotify',[]);
 angular.module('spotify').factory('spotifyService', ['$http',function($http) {
+  "use strict";
   var spotifyService = {
     shouldMemoize: true,
     // memoize calls
@@ -9,17 +10,17 @@ angular.module('spotify').factory('spotifyService', ['$http',function($http) {
     userCountry: 'SE',
     lookupArtistAlbums: function(artist,album,img,callback,ref) {
       var aral = {'ar':artist,'al':album,'img':img};
-      if (spotifyService.shouldMemoize && spotifyService.aaMem[artist+'_'+album]) { 
+      if (spotifyService.shouldMemoize && spotifyService.aaMem[artist+'_'+album]) {
         //console.log('spotify memoize hit for '+artist+'_'+album);
         callback(spotifyService.aaMem[artist+'_'+album], artist, album,img,ref);
       } else {
         $http.get('http://ws.spotify.com/search/1/album.json?q='+album.replace(/&/g,'%26')+'%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
           var findings = [];
           if (data.info.num_results > 0) {
-            for (var j = 0; j < data.albums.length; j++) {  
+            for (var j = 0; j < data.albums.length; j++) {
               if (data.albums[j].artists[0].name.toLowerCase() == artist.toLowerCase() &&
-                spotifyService.checkAvail(data.albums[j].availability.territories)          
-                ) {         
+                spotifyService.checkAvail(data.albums[j].availability.territories)
+                ) {
                 findings.push({
                   'artist':data.albums[j].artists[0].name,
                   'album':data.albums[j].name,
@@ -38,8 +39,8 @@ angular.module('spotify').factory('spotifyService', ['$http',function($http) {
       }
     },
     lookupNews:function(artist,callback,i,ignoreReleaseList) {
-      if (spotifyService.shouldMemoize && spotifyService.newsMem[artist]) { 
-        //console.log('spotify memoize hit for '+artist);     
+      if (spotifyService.shouldMemoize && spotifyService.newsMem[artist]) {
+        //console.log('spotify memoize hit for '+artist);
         callback(spotifyService.newsMem[artist],i,ignoreReleaseList);
       } else {
         $http.get('http://ws.spotify.com/search/1/album.json?q=tag:new%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
