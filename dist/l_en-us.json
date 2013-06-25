@@ -1,0 +1,93 @@
+{
+   "en-us": {
+      "": {
+         "Project-Id-Version": "SWL",
+         "Report-Msgid-Bugs-To": "EMAIL@ADDRESS",
+         "POT-Creation-Date": "2013-06-19 10:58+0200",
+         "PO-Revision-Date": "2013-06-19 11:01+0100",
+         "Last-Translator": "",
+         "Language-Team": "",
+         "MIME-Version": "1.0",
+         "Content-Type": "text/plain; charset=UTF-8",
+         "Content-Transfer-Encoding": "8bit",
+         "Generated-By": "Babel 0.9.6",
+         "X-Generator": "Poedit 1.5.5",
+         "Plural-Forms": "nplurals=2; plural=(n != 1);",
+         "Language": "en-us",
+         "X-Poedit-SourceCharset": "UTF-8"
+      },
+      "Watch List": [
+         null,
+         "Watch List"
+      ],
+      "News": [
+         null,
+         "News"
+      ],
+      "Albums": [
+         null,
+         "Albums"
+      ],
+      "Settings": [
+         null,
+         "Settings"
+      ],
+      "Your last.fm username": [
+         null,
+         "Your last.fm username"
+      ],
+      "Set": [
+         null,
+         "Set"
+      ],
+      "Suggestion": [
+         "Suggestions",
+         "Suggestion",
+         "Suggestions"
+      ],
+      "add": [
+         null,
+         "add"
+      ],
+      "On": [
+         null,
+         "On"
+      ],
+      "import complete": [
+         null,
+         "import complete"
+      ],
+      "Skipping duplicate, %s is already in the list": [
+         null,
+         "Skipping duplicate, %s is already in the list"
+      ],
+      "Added %s": [
+         null,
+         "Added %s"
+      ],
+      "Removed": [
+         null,
+         "Removed"
+      ],
+      "Skipping duplicate, %1$s %2$s is already in the list": [
+         null,
+         "Skipping duplicate, %1$s %2$s is already in the list"
+      ],
+      "Added %1$s - %2$s": [
+         null,
+         "Added %1$s - %2$s"
+      ],
+      "Session expired, connect again: %s": [
+         null,
+         "Session expired, connect again: %s"
+      ],
+      "Path not found %s": [
+         null,
+         "Path not found %s"
+      ],
+      "No data available": [
+         null,
+         "No data available"
+      ]
+   }
+}

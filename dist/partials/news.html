@@ -1,0 +1,12 @@
+<input ng-model="mAddArtistNews"/> <button ng-click="addArtistNews()">add</button>
+<ul class="grid">
+	<li ng-repeat="album in artistNewsModel.artistNewsFindings"><a href="{{album.href}}"><img class="albumCover" ng-src="{{album.img}}"/><br/>
+		<div class="artistAlbumGrid">{{album.artist}}<br/>{{album.album}}</div></a> <a href="" ng-click="addIgnore(album.href)">hide</a>
+	</li>
+</ul>
+<div class="cleared"></div>
+<h3>Your list</h3>
+<ul class="list">
+	<li ng-repeat="artist in artistNewsModel.news"><img ng-src="{{artistNewsModel.imgs[$index]}}"/><span><span class="artistAlbum">{{artist.artist}}</span><br/>{{artist.added}}</span><a href="" ng-click="rm($index)">delete</a>
+	</li>
+</ul>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" xmlns:ng="http://angularjs.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Watch List</title>
+  <link href='http://fonts.googleapis.com/css?family=Lato:400|Asap:700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/swl.css"/>
+</head>
+<body>
+
+  <div id="header-fixed">
+    <div ng-controller="navCtrl" id="menu" class="container">
+    <ul id="menuItems">
+      <li ng-class="{selected:isActive('/home')}"><a href="#/home">{{_("Watch List")}}</a></li>
+      <li ng-class="{selected:isActive('/news')}"><a drop-from-spotify href="#/news">{{_("News")}}</a></li>
+      <li ng-class="{selected:isActive('/albums')}"><a href="#/albums">{{_("Albums")}}</a></li>
+      <li ng-class="{selected:isActive('/settings')}"><a href="#/settings">{{_("Settings")}}</a></li>
+    </div>
+  </div>
+
+
+<div class="container">
+  <div ng-controller="StatusController" class="status-fixed">
+    <div ng-repeat="status in statuses" ng-class="status.type" ng-cloak>
+      {{status.msg}}
+    </div>
+  </div>
+
+  <div ng-view></div>
+
+</div>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+  <script src="js/swl.min.js"></script>
+  <script src="js/vendor/remoteStorage.js"></script>
+  <script>
+  angular.element(document).ready(function() {
+    console.log('angular doc ready');
+    Lingua.init(document, function() {
+      angular.bootstrap(document, ['swl']);
+    });
+  });
+  </script>
+</body>
+</html>
