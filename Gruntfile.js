@@ -31,7 +31,8 @@ module.exports = function(grunt) {
           {expand:true, src: 'img/*',dest: 'dist'},
           {expand:true, src: 'css/*',dest: 'dist'},
           {expand:true, src: 'js/**',dest: 'dist'},
-          {src: 'index.html',dest: 'dist/'}
+          {src: 'index.html',dest: 'dist/'},,
+          {src: 'l_*.json',dest: 'dist/'}
         ]
       }
     },
@@ -42,6 +43,8 @@ module.exports = function(grunt) {
         "!dist/css/swl.css",
         "dist/js/*.js",
         "!dist/js/swl.min.js",
+        "dist/js/vendor/*.js",
+        "!dist/js/vendor/remoteStorage.js"
       ]
     },
     useref: {
