@@ -10,7 +10,9 @@
     "grunt-contrib-sass": "~0.3.0",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-clean": "~0.4.1",
-    "grunt-useref": "0.0.16",
-    "grunt-img": "latest"
+    "grunt-img": "latest",
+    "grunt-rev": "~0.1.0",
+    "grunt-usemin": "~0.1.12",
+    "grunt-contrib-cssmin": "~0.6.1"
   }
 }

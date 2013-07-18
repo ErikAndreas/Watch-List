@@ -29,32 +29,36 @@ module.exports = function(grunt) {
         files: [
           {expand:true, src: 'partials/*',dest: 'dist'},
           {expand:true, src: 'img/*',dest: 'dist'},
-          {expand:true, src: 'css/*',dest: 'dist'},
-          {expand:true, src: 'js/**',dest: 'dist'},
-          {src: 'index.html',dest: 'dist/'},,
+          {src: 'index.html',dest: 'dist/'},
+          {src: 'js/vendor/remoteStorage.js',dest:'dist/'},
           {src: 'l_*.json',dest: 'dist/'}
         ]
       }
     },
     clean: {
-      src: ['dist'],
-      post: [
-        "dist/css/**/*",
-        "!dist/css/swl.css",
-        "dist/js/*.js",
-        "!dist/js/swl.min.js",
-        "dist/js/vendor/*.js",
-        "!dist/js/vendor/remoteStorage.js"
-      ]
+      src: ['dist']
     },
-    useref: {
-      // specify which files contain the build blocks
-      html: 'dist/index.html',
-      temp: 'dist'
+    useminPrepare: {
+      html: 'index.html',
+      options: {
+        dest: 'dist'
+      }
+    },
+    usemin:{
+      html: ['dist/*.html'],
+      css: ['dist/css/*.css'],
+      options: {
+        dirs: ['dist']
+      }
     },
     img: {
       optimize: {
         src: 'dist/img'
+      }
+    },
+    rev: {
+      files: {
+        src: ['dist/js/*.js', 'dist/css/*.css']
       }
     }
   });
@@ -63,12 +67,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-useref'); // using this also loads grunt-contrib-concat, grunt-contrib-uglify and grunt-css
-  // grunt.loadNpmTasks('grunt-contrib-uglify');
-  // grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-usemin');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-rev');
   grunt.loadNpmTasks('grunt-img');
 
   grunt.registerTask('default', ['jshint', 'sass']);
-  grunt.registerTask('dist', ['jshint','sass','clean:src','copy','useref','concat','uglify','cssmin','img:optimize','clean:post']);
+  grunt.registerTask('dist', ['jshint','sass','clean:src','useminPrepare','concat','uglify','copy','cssmin','rev','usemin','img:optimize']);
 };
