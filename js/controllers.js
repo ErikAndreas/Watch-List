@@ -83,7 +83,7 @@ angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsServic
             o = JSON.parse(o);
             watchListService.save(o);
             $scope.mImport = '';
-            statusService.add('info',_("import complete"));
+            statusService.add('info',$scope._("import complete"));
         } catch (err) {
             statusService.add('error',err.message);
         }

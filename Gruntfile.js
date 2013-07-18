@@ -51,6 +51,11 @@ module.exports = function(grunt) {
       // specify which files contain the build blocks
       html: 'dist/index.html',
       temp: 'dist'
+    },
+    img: {
+      optimize: {
+        src: 'dist/img'
+      }
     }
   });
 
@@ -62,7 +67,8 @@ module.exports = function(grunt) {
   // grunt.loadNpmTasks('grunt-contrib-uglify');
   // grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-img');
 
   grunt.registerTask('default', ['jshint', 'sass']);
-  grunt.registerTask('dist', ['jshint','sass','clean:src','copy','useref','concat','uglify','cssmin','clean:post']);
+  grunt.registerTask('dist', ['jshint','sass','clean:src','copy','useref','concat','uglify','cssmin','img:optimize','clean:post']);
 };
