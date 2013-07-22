@@ -19,3 +19,4 @@ And push to github pages.
 
 See [github pages](https://help.github.com/articles/creating-pages-with-the-automatic-generator) and [yeoman dist](https://github.com/yeoman/yeoman/wiki/Deployment)
 
+TODO: proper logging, see https://coderwall.com/p/_zporq
