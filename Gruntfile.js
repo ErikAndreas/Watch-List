@@ -86,8 +86,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-rev');
   grunt.loadNpmTasks('grunt-img');
+  grunt.loadNpmTasks('grunt-lingua');
 
-  //
+  /*
   grunt.registerMultiTask('lingua','tooling for lingua', function() {
     var po2json = require('po2json');
     var path = require('path');
@@ -115,7 +116,7 @@ module.exports = function(grunt) {
     } else {
       grunt.log.writeln('No such target');
     }
-  });
+  });*/
 
   grunt.registerTask('default', ['jshint', 'sass']);
   grunt.registerTask('dist', ['jshint','sass','clean:src','useminPrepare','concat','uglify','copy','cssmin','rev','usemin','img:optimize']);
