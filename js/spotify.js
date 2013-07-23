@@ -1,6 +1,6 @@
 
 angular.module('spotify',[]);
-angular.module('spotify').factory('spotifyService', ['$http',function($http) {
+angular.module('spotify').factory('spotifyService', ['$http','$log',function($http,$log) {
   "use strict";
   var spotifyService = {
     shouldMemoize: true,
@@ -11,7 +11,7 @@ angular.module('spotify').factory('spotifyService', ['$http',function($http) {
     lookupArtistAlbums: function(artist,album,img,callback,ref) {
       var aral = {'ar':artist,'al':album,'img':img};
       if (spotifyService.shouldMemoize && spotifyService.aaMem[artist+'_'+album]) {
-        //console.log('spotify memoize hit for '+artist+'_'+album);
+        //$log.log('spotify memoize hit for '+artist+'_'+album);
         callback(spotifyService.aaMem[artist+'_'+album], artist, album,img,ref);
       } else {
         $http.get('http://ws.spotify.com/search/1/album.json?q='+album.replace(/&/g,'%26')+'%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
@@ -33,14 +33,14 @@ angular.module('spotify').factory('spotifyService', ['$http',function($http) {
           if (spotifyService.shouldMemoize) {
             spotifyService.aaMem[artist+'_'+album] = findings;
           }
-          //console.log(findings);
+          //$log.log(findings);
           callback(findings, aral.ar, aral.al,aral.img,ref);
         });
       }
     },
     lookupNews:function(artist,callback,i,ignoreReleaseList) {
       if (spotifyService.shouldMemoize && spotifyService.newsMem[artist]) {
-        //console.log('spotify memoize hit for '+artist);
+        //$log.log('spotify memoize hit for '+artist);
         callback(spotifyService.newsMem[artist],i,ignoreReleaseList);
       } else {
         $http.get('http://ws.spotify.com/search/1/album.json?q=tag:new%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
@@ -68,9 +68,9 @@ angular.module('spotify').factory('spotifyService', ['$http',function($http) {
       }
     },
     lookupArtist:function(uri, callback) {
-      //console.log('checking ' + uri);
+      //$log.log('checking ' + uri);
       $http.get('http://ws.spotify.com/lookup/1/.json?uri='+uri).success(function(data) {
-        //console.log(data);
+        //$log.log(data);
         if (data.artist) {
           callback(data.artist.name);
         }
@@ -79,7 +79,7 @@ angular.module('spotify').factory('spotifyService', ['$http',function($http) {
         }
       }).
       error(function(data, status, headers, config) {
-        console.log('fail',data, status);
+        $log.error('fail',data, status);
       });
     },
     checkAvail: function(cs) {
@@ -88,7 +88,7 @@ angular.module('spotify').factory('spotifyService', ['$http',function($http) {
     shouldIgnore: function(ignoreReleaseList,href) {
       for (var i = 0; ignoreReleaseList && i < ignoreReleaseList.length; i++) {
         if (href && ignoreReleaseList[i].toLowerCase() == href.toLowerCase()) {
-          console.log('ignoring release ' + href);
+          $log.log('ignoring release ' + href);
           return true;
         }
       }

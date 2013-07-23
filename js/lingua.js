@@ -21,7 +21,7 @@ using poedit the tabs for plural translations does not always appear, see https:
     init:function(doc,cb) {
         "use strict";
         var locale = localStorage.getItem('locale');
-        console.log(locale);
+        //console.log(locale);
         if (locale) {
           var s = doc.createElement('script');
           s.setAttribute('src', "//code.angularjs.org/1.1.5/i18n/angular-locale_"+locale+".js");
@@ -38,7 +38,7 @@ using poedit the tabs for plural translations does not always appear, see https:
             },
             locale_data : data
           });
-          console.log(i18n);
+          //console.log(i18n);
           window.i18n = i18n;
           cb();
         });

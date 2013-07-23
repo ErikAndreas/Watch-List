@@ -24,7 +24,7 @@ angular.module('store').factory('lsAdaptorService',[function() {
   };
 }]);
 
-angular.module('store').factory('rsService',['storeService',function(storeService) {
+angular.module('store').factory('rsService',['storeService','$log',function(storeService,$log) {
   "use strict";
   var rsService = {
     key:storeService.local.getItem('RS.userAddress'),
@@ -36,22 +36,22 @@ angular.module('store').factory('rsService',['storeService',function(storeServic
           rsService.key = userAddress;
           storeService.local.setItem('RS.userAddress',userAddress);
           storeService.local.setItem('RS.userStorageInfo', angular.toJson(storageInfo));
-          console.log('pathname ' + location.pathname.substring(0,location.pathname.lastIndexOf('/')));
+          $log.log('pathname ' + location.pathname.substring(0,location.pathname.lastIndexOf('/')));
           //var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '/receiveToken.html';
           var redirectUri = location.protocol + '//' + location.host + location.pathname.substring(0,location.pathname.lastIndexOf('/')) + '';
-          console.log('will open ' + redirectUri + ' for oauth dance');
+          $log.log('will open ' + redirectUri + ' for oauth dance');
           var oauthPage = remoteStorage.createOAuthAddress(storageInfo, [rsService.category+':rw'], redirectUri);
-          console.log(oauthPage);
+          $log.log(oauthPage);
           location.href = oauthPage;
         } else {
-          console.log(err);
+          $log.error(err);
         }
       });
     },
     getItem:function(callback) {
       var token = storeService.local.getItem('RS.token');
       var key = storeService.local.getItem('RS.userAddress');
-      console.log('tryin remote get for ' + key + ' using token ' + token);
+      $log.log('tryin remote get for ' + key + ' using token ' + token);
       var storageInfo = JSON.parse(storeService.local.getItem('RS.userStorageInfo'));
       if (storageInfo) {
         var client = remoteStorage.createClient(storageInfo,rsService.category+'/SWL', token);
@@ -66,7 +66,7 @@ angular.module('store').factory('rsService',['storeService',function(storeServic
     setItem:function(value, callback) {
       var token = storeService.local.getItem('RS.token');
       var key = storeService.local.getItem('RS.userAddress');
-      console.log('tryin remote set for ' + key + ' using token ' + token);
+      $log.log('tryin remote set for ' + key + ' using token ' + token);
       var storageInfo = JSON.parse(storeService.local.getItem('RS.userStorageInfo'));
       var client = remoteStorage.createClient(storageInfo, rsService.category+'/SWL', token);
       // TODO: check err == 401 -> session expired, if (err) -> path not found, data == undefined -> no data on path

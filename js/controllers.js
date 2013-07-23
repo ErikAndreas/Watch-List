@@ -18,7 +18,6 @@ angular.module('swl').controller('LastFMCtrl', ['$scope','lastFMOnSpotifyService
     };
 
     $scope.addArtistAlbum = function(ar,al) {
-        console.log('add ' +ar + " - " + al);
         artistAlbumModelService.addArtistAlbum(ar,al);
     };
 }]);
@@ -28,13 +27,10 @@ angular.module('swl').controller('NewsCtrl',['$scope','artistNewsModelService',f
     $scope.artistNewsModel = artistNewsModelService.artistNewsModel;
     artistNewsModelService.populate();
 
-    //console.log($scope);
-
     $scope.addArtistNews = function() {
         // TODO check not empty
         var a = $scope.mAddArtistNews;
         artistNewsModelService.addNews(a);
-        console.log($scope);
         $scope.mAddArtistNews = '';
     };
 
@@ -51,14 +47,11 @@ angular.module('swl').controller('AlbumsCtrl',['$scope', 'artistAlbumModelServic
     "use strict";
     $scope.artistAlbumModel = artistAlbumModelService.artistAlbumModel;
     artistAlbumModelService.populate();
-    //console.log($scope);
     $scope.addArtistAlbum = function() {
         // TODO check not empty
         var ar = $scope.mAddArtist;
         var al = $scope.mAddAlbum;
-        console.log('add ' +ar + " - " + al);
         artistAlbumModelService.addArtistAlbum(ar,al);
-        console.log($scope);
         $scope.mAddArtist = '';
         $scope.mAddAlbum = '';
     };
@@ -90,7 +83,6 @@ angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsServic
     };
 
     $rootScope.$on('dropFileEvent', function(evt,fc) {
-        console.log('got dropFileEvent', fc);
         $scope.mImport = fc;
         $scope.$apply();
     });
@@ -99,16 +91,12 @@ angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsServic
 angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService', function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
     "use strict";
     $scope.isActive = function(route) {
-        //console.log(route);
         return route === $location.path();
     };
 
     $rootScope.$on('dropFromSpotifyEvent', function(evt,fc) {
-        //console.log('got dropFromSpotifyEvent', fc)
         var uri = fc.substring(fc.lastIndexOf('/')+1);
-        //console.log(uri);
         spotifyService.lookupArtist('spotify:artist:'+uri,function(artist) {
-            //console.log(artist);
             artistNewsModelService.addNews(artist);
         });
         // weird, if not calling $apply the $http call in lookupArtist wont happen...

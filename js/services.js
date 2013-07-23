@@ -1,6 +1,6 @@
 
 
-angular.module('swl').factory('watchListService',['storeService',function(storeService) {
+angular.module('swl').factory('watchListService',['storeService','$log',function(storeService,$log) {
   "use strict";
   var watchListService = {
     // model to persist (local and remote)
@@ -12,7 +12,6 @@ angular.module('swl').factory('watchListService',['storeService',function(storeS
     },
     tSync:{},
     getData:function(){
-      console.log('wls getData');
       var d = storeService.local.getItem('WL-data');
       if (d) {
         watchListService.data = JSON.parse(d);
@@ -36,10 +35,10 @@ angular.module('swl').factory('watchListService',['storeService',function(storeS
     },
     save:function(d) {
       d.updatedAt = new Date(); // FIXME? (utc)
-      console.log('saving local', d);
+      $log.log('saving local', d);
       storeService.local.setItem('WL-data',angular.toJson(d));
       // settimeout call setRemote
-      console.log('save data remote');
+      $log.log('save data remote');
       if (storeService.local.getItem('RS.token')) {
         watchListService.tSync = window.setTimeout(function(){watchListService.setRemote();}, 5000);
       }
@@ -59,7 +58,7 @@ angular.module('swl').factory('watchListService',['storeService',function(storeS
     },
     setRemote:function(callback) {
       storeService.remote.setItem(angular.toJson(watchListService.getData()),function(){
-        console.log('remote updated');
+        $log.log('remote updated');
         var d = watchListService.getData();
         //d.updatedAt = date;
         storeService.local.setItem('WL-data',angular.toJson(d));
@@ -70,7 +69,8 @@ angular.module('swl').factory('watchListService',['storeService',function(storeS
   return watchListService;
 }]);
 
-angular.module('swl').factory('artistNewsModelService',['linguaService','watchListService','spotifyService','lastFMService','statusService','swlSettings',function(linguaService,watchListService,spotifyService,lastFMService,statusService,swlSettings){
+angular.module('swl').factory('artistNewsModelService',['linguaService','watchListService','spotifyService','lastFMService','statusService','swlSettings','$log',
+  function(linguaService,watchListService,spotifyService,lastFMService,statusService,swlSettings,$log){
   "use strict";
   var artistNewsModelService = {
     // in-memory model
@@ -84,16 +84,13 @@ angular.module('swl').factory('artistNewsModelService',['linguaService','watchLi
       artistNewsModelService.artistNewsModel.artistNewsFindings = [];
       var imageHandler = function(img, k){
         if (img && img.length > 0) {
-          //console.log(img, k);
           artistNewsModelService.artistNewsModel.artistNewsFindings[k-1].img=img;
         }
       };
       var handler = function(findings,i,ignoreReleaseList) {
         if (findings && findings.length > 0) {
-          //console.log(findings,i);
           artistNewsModelService.artistNewsModel.imgs[i] = 'img/spotify32bw.png';
           for (var j=0;j<findings.length;j++) {
-            //console.log(artistNewsFindings);
             artistNewsModelService.artistNewsModel.artistNewsFindings.push(findings[j]);
             lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,imageHandler,artistNewsModelService.artistNewsModel.artistNewsFindings.length);
           }
@@ -107,8 +104,7 @@ angular.module('swl').factory('artistNewsModelService',['linguaService','watchLi
     },
     addNews:function(a) {
       if (artistNewsModelService.containsNews(a)) {
-        console.log('duplicate, skipping ',a);
-        //statusService.add('error','Skipping duplicate, '+a+' is already in the list');
+        $log.log('duplicate, skipping ',a);
         statusService.add('error',linguaService._("Skipping duplicate, %s is already in the list",a));
       } else  {
         artistNewsModelService.artistNewsModel.news.push({"artist": a, "added": watchListService.dformat()});
@@ -140,7 +136,8 @@ angular.module('swl').factory('artistNewsModelService',['linguaService','watchLi
   return artistNewsModelService;
 }]);
 
-angular.module('swl').factory('artistAlbumModelService',['linguaService','watchListService','spotifyService','lastFMService','statusService','swlSettings',function(linguaService,watchListService,spotifyService,lastFMService,statusService,swlSettings){
+angular.module('swl').factory('artistAlbumModelService',['linguaService','watchListService','spotifyService','lastFMService','statusService','swlSettings','$log',
+  function(linguaService,watchListService,spotifyService,lastFMService,statusService,swlSettings,$log){
   "use strict";
   var artistAlbumModelService = {
     // in-memory model
@@ -153,16 +150,13 @@ angular.module('swl').factory('artistAlbumModelService',['linguaService','watchL
       artistAlbumModelService.artistAlbumModel.artistAlbumsFindings = [];
       var imageHandler = function(img, k){
         if (img && img.length > 0) {
-          //console.log(img, k);
           artistAlbumModelService.artistAlbumModel.artistAlbumsFindings[k-1].img=img;
         }
       };
       var handler = function(findings,artist,album,img,i) {
         if (findings && findings.length > 0) {
-          //console.log(findings,i);
           artistAlbumModelService.artistAlbumModel.imgs[i] = 'img/spotify32bw.png';
           for (var j=0;j<findings.length;j++) {
-            //console.log(artistNewsFindings);
             artistAlbumModelService.artistAlbumModel.artistAlbumsFindings.push(findings[j]);
             lastFMService.albumCover(swlSettings.lastFMapiKey,findings[j].artist, findings[j].album,imageHandler,artistAlbumModelService.artistAlbumModel.artistAlbumsFindings.length);
           }
@@ -178,14 +172,12 @@ angular.module('swl').factory('artistAlbumModelService',['linguaService','watchL
     },
     addArtistAlbum:function(ar,al) {
       if (artistAlbumModelService.containsArtistAlbum(ar,al)) {
-       console.log('duplicate, skipping ',ar,al);
-       //statusService.add('error','Skipping duplicate, '+ar+' - '+al+' is already in the list');
+       $log.log('duplicate, skipping ',ar,al);
        statusService.add('error',linguaService._("Skipping duplicate, %1$s %2$s is already in the list",[ar,al]));
       } else  {
         artistAlbumModelService.artistAlbumModel.artistAlbums.push({"artist": ar, "album": al, "added": watchListService.dformat()});
         artistAlbumModelService.populate();
         watchListService.saveArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums);
-        //statusService.add('info','Added '+ar+' - '+al);
         statusService.add('info',linguaService._("Added %1$s - %2$s",[ar,al]));
       }
     },
@@ -214,7 +206,6 @@ angular.module('swl').factory('statusService',['$timeout',function($timeout) {
     add:function(type,msg) {
       statusService.statuses.push({'type':type, 'msg': msg});
       $timeout(function() {
-        console.log('timeout');
         statusService.statuses.splice(0,1);
       }, 3000);
 
@@ -223,7 +214,8 @@ angular.module('swl').factory('statusService',['$timeout',function($timeout) {
   return statusService;
 }]);
 
-angular.module('swl').factory('remoteCheckService',['linguaService','storeService','statusService','watchListService',function(linguaService,storeService,statusService,watchListService) {
+angular.module('swl').factory('remoteCheckService',['linguaService','storeService','statusService','watchListService','$log',
+  function(linguaService,storeService,statusService,watchListService,$log) {
   "use strict";
   var remoteCheckService = {
     checkForData:function() {
@@ -235,15 +227,15 @@ angular.module('swl').factory('remoteCheckService',['linguaService','storeServic
         } else {
           if (data) {
             data = JSON.parse(data);
-            console.log('remote data',data);
+            $log.log('remote data',data);
             // compare remote updatedAt w local d.updatedAt - if remote newer update local
             var remoteD = Date.parse(data.updatedAt);
-            console.log('remote date',data.updatedAt,remoteD);
+            $log.log('remote date',data.updatedAt,remoteD);
             var localD = Date.parse(watchListService.getData().updatedAt);
             if (isNaN(localD)) localD = 0;
-            console.log('local date',localD);
+            $log.log('local date',localD);
             if (remoteD > localD) {
-              console.log('remote newer, updating');
+              $log.log('remote newer, updating');
               //watchListService.data = data;
               //watchListService.data.updatedAt = data.updatedAt;
               //storeService.local.setItem('WL-data',angular.toJson(watchListService.data));
@@ -260,7 +252,8 @@ angular.module('swl').factory('remoteCheckService',['linguaService','storeServic
   return remoteCheckService;
 }]);
 
-angular.module('swl').factory('lastFMOnSpotifyService',['lastFMService','spotifyService','swlSettings',function(lastFMService,spotifyService,swlSettings){
+angular.module('swl').factory('lastFMOnSpotifyService',['lastFMService','spotifyService','swlSettings',
+  function(lastFMService,spotifyService,swlSettings){
   "use strict";
   var lastFMOnSpotifyService = {
     getSuggsOnSpot:function(un, callback) {
@@ -270,7 +263,6 @@ angular.module('swl').factory('lastFMOnSpotifyService',['lastFMService','spotify
         var handler = function(r,artist, album,img) {
           if (r.length > 0) {
             for (var i = 0; i < r.length;i++) {
-              console.log('onSpot ' , r[i].artist, r[i].album,r[i].img,r[i].href);
               onSpot.push({
                 'artist': r[i].artist,
                 'album':r[i].album,
@@ -279,7 +271,6 @@ angular.module('swl').factory('lastFMOnSpotifyService',['lastFMService','spotify
               });
             }
           } else {
-            console.log('sugg' , artist, album,img);
             suggs.push({
               'artist': artist,
               'album':album,

@@ -19,4 +19,4 @@ And push to github pages.
 
 See [github pages](https://help.github.com/articles/creating-pages-with-the-automatic-generator) and [yeoman dist](https://github.com/yeoman/yeoman/wiki/Deployment)
 
-TODO: proper logging, see https://coderwall.com/p/_zporq
+TODO: proper logging, see https://coderwall.com/p/_zporq, http://www.emadibrahim.com/2013/06/26/error-logging-with-angular-and-log4javascript/

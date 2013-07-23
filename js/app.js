@@ -22,16 +22,17 @@ angular.module('swl').value('swlSettings',{
 		lastFMapiKey:'00198b31b392d0750f88819830e49680'
 });
 
-angular.module('swl').run(['$rootScope','storeService','lsAdaptorService','rsService','remoteCheckService','linguaService',function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService,linguaService){
+angular.module('swl').run(['$rootScope','storeService','lsAdaptorService','rsService','remoteCheckService','linguaService','$log',
+	function($rootScope,storeService,lsAdaptorService,rsService,remoteCheckService,linguaService,$log){
 	"use strict";
-	console.log('swl.run');
+	$log.info('swl.run');
 	storeService.local = lsAdaptorService;
 	storeService.remote = rsService;
 	$rootScope._ = linguaService._;
     $rootScope._n = linguaService._n;
 	if (remoteStorage.receiveToken()) {
 		var token = remoteStorage.receiveToken();
-		console.log('back from oauth, got token ',token);
+		$log.log('back from oauth, got token ',token);
 		storeService.local.setItem('RS.token',token);
 	}
 	if (storeService.local.getItem('RS.token')) {

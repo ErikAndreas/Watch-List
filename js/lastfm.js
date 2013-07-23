@@ -17,11 +17,9 @@ angular.module('lastfm').factory('lastFMService', ['$http','$q',function($http,$
             findings.push({'artist':d[i].data.albums.album[j].artist.name,'album':d[i].data.albums.album[j].name,'image':d[i].data.albums.album[j].image[2]['#text']});
           }
         }
-        console.log(findings);
         // The return value gets picked up by the then in the controller
         return findings;
       });
-      console.log(promise);
       // Return the promise to the controller
       return promise;
     },
