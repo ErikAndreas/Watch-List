@@ -29,7 +29,7 @@ module.exports = function(grunt) {
       dist: {
         files: [
           {expand:true, src: 'partials/*',dest: 'dist'},
-          {expand:true, src: 'img/*',dest: 'dist'},
+          /*{expand:true, src: 'img/*',dest: 'dist'},*/
           {src: 'index.html',dest: 'dist/'},
           {src: 'js/vendor/remoteStorage.js',dest:'dist/'},
           {src: 'l_*.json',dest: 'dist/'}
@@ -55,6 +55,38 @@ module.exports = function(grunt) {
     img: {
       optimize: {
         src: 'dist/img'
+      }
+    },
+    imagemin: {
+      png: {
+        options: {
+          optimizationLevel: 7
+        },
+        files: [
+          {
+            expand: true,
+            src: ['img/*.png'],
+            // Could also match cwd line above. i.e. project-directory/img/
+            dest: 'dist',
+            ext: '.png'
+          }
+        ]
+      },
+      jpg: {
+        options: {
+          progressive: true
+        },
+        files: [
+          {
+            // Set to true to enable the following options…
+            expand: true,
+            // cwd is 'current working directory'
+            src: ['img/*.jpg'],
+            // Could also match cwd. i.e. project-directory/img/
+            dest: 'dist',
+            ext: '.jpg'
+          }
+        ]
       }
     },
     rev: {
@@ -85,7 +117,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-rev');
-  grunt.loadNpmTasks('grunt-img');
+  //grunt.loadNpmTasks('grunt-img');
+  grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-lingua');
 
   /*
@@ -119,5 +152,5 @@ module.exports = function(grunt) {
   });*/
 
   grunt.registerTask('default', ['jshint', 'sass']);
-  grunt.registerTask('dist', ['jshint','sass','clean:src','useminPrepare','concat','uglify','copy','cssmin','rev','usemin','img:optimize']);
+  grunt.registerTask('dist', ['jshint','sass','clean:src','useminPrepare','concat','uglify','copy','cssmin','rev','usemin','imagemin']);
 };

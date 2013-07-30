@@ -15,6 +15,7 @@
     "grunt-usemin": "~0.1.12",
     "grunt-contrib-cssmin": "~0.6.1",
     "po2json": "*",
-    "grunt-lingua": "~0.1.0"
+    "grunt-lingua": "~0.1.0",
+    "grunt-contrib-imagemin": "~0.1.4"
   }
 }
