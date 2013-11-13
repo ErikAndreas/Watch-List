@@ -1,6 +1,6 @@
 
 
-angular.module('swl').factory('watchListService',['storeService','$log',function(storeService,$log) {
+angular.module('swl').factory('watchListService',['dropboxService','$log',function(dropboxService,$log) {
   "use strict";
   var watchListService = {
     // model to persist (local and remote)
@@ -10,39 +10,53 @@ angular.module('swl').factory('watchListService',['storeService','$log',function
       ignoreReleaseList:[],
       updatedAt:{}
     },
-    tSync:{},
-    getData:function(){
-      var d = storeService.local.getItem('WL-data');
-      if (d) {
-        watchListService.data = JSON.parse(d);
+    getData:function(cb) {
+      if (dropboxService.isAuth()) {
+        //TODO: be smart not fetch from dropbox every time
+        dropboxService.get(function(data) {
+          if (data) {
+            watchListService.data = data;
+            //localStorage.setItem('WL-data', data);
+          }
+          cb(watchListService.data);
+        },function(error) {
+          console.log('Error opening default datastore: ' + error);
+        });
+      } else {
+        var d = localStorage.getItem('WL-data');
+        if (d) {
+          watchListService.data = JSON.parse(d);
+        }
+        cb(watchListService.data);
       }
-      return watchListService.data;
     },
-    saveNews:function(news) {
-      var d = watchListService.getData();
-      d.news = news;
-      watchListService.save(d);
+    saveNews:function(list,cb) {
+      var d = JSON.parse(localStorage.getItem('WL-data'));
+      d.news = list;
+      watchListService.save(d,cb);
     },
-    saveIgnoreReleaseList:function(list) {
-      var d = watchListService.getData();
+    saveIgnoreReleaseList:function(list,cb) {
+      var d = JSON.parse(localStorage.getItem('WL-data'));
       d.ignoreReleaseList = list;
-      watchListService.save(d);
+      watchListService.save(d,cb);
     },
-    saveArtistAlbums:function(list) {
-      var d = watchListService.getData();
+    saveArtistAlbums:function(list,cb) {
+      var d = JSON.parse(localStorage.getItem('WL-data'));
       d.artistAlbums = list;
-      watchListService.save(d);
+      watchListService.save(d,cb);
     },
-    save:function(d) {
+    save:function(d,cb) {
       d.updatedAt = new Date(); // FIXME? (utc)
       $log.log('saving local', d);
-      storeService.local.setItem('WL-data',angular.toJson(d));
-      // settimeout call setRemote
-      $log.log('save data remote');
-      if (storeService.local.getItem('RS.token')) {
-        watchListService.tSync = window.setTimeout(function(){watchListService.setRemote();}, 5000);
+      localStorage.setItem('WL-data',angular.toJson(d));
+      if (dropboxService.isAuth()) {
+        $log.log('save data remote');
+        dropboxService.set(angular.toJson(d),cb);
+      } else {
+        cb();
       }
     },
+
     dformat:function(date) {
       if (!date) date = new Date();
       var dd = date.getDate();
@@ -51,19 +65,6 @@ angular.module('swl').factory('watchListService',['storeService','$log',function
       if (dd < 10) {dd = '0' + dd;}
       if (mm < 10) {mm = '0' + mm;}
       return yyyy + '-' + mm + '-' + dd;
-    },
-    // remote is stored as string, callback need to parse to json
-    getRemote:function(callback) {
-      storeService.remote.getItem(callback);
-    },
-    setRemote:function(callback) {
-      storeService.remote.setItem(angular.toJson(watchListService.getData()),function(){
-        $log.log('remote updated');
-        var d = watchListService.getData();
-        //d.updatedAt = date;
-        storeService.local.setItem('WL-data',angular.toJson(d));
-        if (callback) callback();
-      });
     }
   };
   return watchListService;
@@ -75,12 +76,13 @@ angular.module('swl').factory('artistNewsModelService',['linguaService','watchLi
   var artistNewsModelService = {
     // in-memory model
     artistNewsModel: {
-      'news':watchListService.getData().news,
-      'ignoreReleaseList':watchListService.getData().ignoreReleaseList,
+      'news':{},
+      'ignoreReleaseList':{},
       'imgs':[],
       'artistNewsFindings':[]
     },
     populate:function(){
+      $log.log('populating');
       artistNewsModelService.artistNewsModel.artistNewsFindings = [];
       var imageHandler = function(img, k){
         if (img && img.length > 0) {
@@ -98,9 +100,13 @@ angular.module('swl').factory('artistNewsModelService',['linguaService','watchLi
           artistNewsModelService.artistNewsModel.imgs[i] = 'img/delete-32.png';
         }
       };
-      for (var i = 0; i < artistNewsModelService.artistNewsModel.news.length; i++) {
-        spotifyService.lookupNews(artistNewsModelService.artistNewsModel.news[i].artist,handler,i,artistNewsModelService.artistNewsModel.ignoreReleaseList);
-      }
+      watchListService.getData(function(data) {
+        artistNewsModelService.artistNewsModel.news = data.news;
+        artistNewsModelService.artistNewsModel.ignoreReleaseList = data.ignoreReleaseList;
+        for (var i = 0; i < artistNewsModelService.artistNewsModel.news.length; i++) {
+          spotifyService.lookupNews(artistNewsModelService.artistNewsModel.news[i].artist,handler,i,artistNewsModelService.artistNewsModel.ignoreReleaseList);
+        }
+      });
     },
     addNews:function(a) {
       if (artistNewsModelService.containsNews(a)) {
@@ -108,21 +114,24 @@ angular.module('swl').factory('artistNewsModelService',['linguaService','watchLi
         statusService.add('error',linguaService._("Skipping duplicate, %s is already in the list",a));
       } else  {
         artistNewsModelService.artistNewsModel.news.push({"artist": a, "added": watchListService.dformat()});
-        artistNewsModelService.populate();
-        watchListService.saveNews(artistNewsModelService.artistNewsModel.news);
-        statusService.add('info',linguaService._("Added %s", a));
+        watchListService.saveNews(artistNewsModelService.artistNewsModel.news, function(){
+          artistNewsModelService.populate();
+          statusService.add('info',linguaService._("Added %s", a));
+        });
       }
     },
     rmNews:function(idx) {
       artistNewsModelService.artistNewsModel.news.splice(idx,1);
-      artistNewsModelService.populate();
-      watchListService.saveNews(artistNewsModelService.artistNewsModel.news);
-      statusService.add('info',linguaService._("Removed"));
+      watchListService.saveNews(artistNewsModelService.artistNewsModel.news, function() {
+        artistNewsModelService.populate();
+        statusService.add('info',linguaService._("Removed"));
+      });
     },
     addIgnore:function(href) {
       artistNewsModelService.artistNewsModel.ignoreReleaseList.push(href);
-      artistNewsModelService.populate();
-      watchListService.saveIgnoreReleaseList(artistNewsModelService.artistNewsModel.ignoreReleaseList);
+      watchListService.saveIgnoreReleaseList(artistNewsModelService.artistNewsModel.ignoreReleaseList,function() {
+        artistNewsModelService.populate();
+      });
     },
     containsNews:function(a) {
       var n = artistNewsModelService.artistNewsModel.news;
@@ -142,7 +151,7 @@ angular.module('swl').factory('artistAlbumModelService',['linguaService','watchL
   var artistAlbumModelService = {
     // in-memory model
     artistAlbumModel: {
-      'artistAlbums':watchListService.getData().artistAlbums,
+      'artistAlbums':[],
       'imgs':[],
       'artistAlbumsFindings':[]
     },
@@ -164,11 +173,14 @@ angular.module('swl').factory('artistAlbumModelService',['linguaService','watchL
           artistAlbumModelService.artistAlbumModel.imgs[i] = 'img/delete-32.png';
         }
       };
-      for (var i = 0; i < artistAlbumModelService.artistAlbumModel.artistAlbums.length; i++) {
-        // meth: artist,album,img,callback,ref
-        // callback: findings, artist, album,img,ref
-        spotifyService.lookupArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums[i].artist,artistAlbumModelService.artistAlbumModel.artistAlbums[i].album,'',handler,i);
-      }
+      watchListService.getData(function(data) {
+        artistAlbumModelService.artistAlbumModel.artistAlbums = data.artistAlbums;
+        for (var i = 0; i < artistAlbumModelService.artistAlbumModel.artistAlbums.length; i++) {
+          // meth: artist,album,img,callback,ref
+          // callback: findings, artist, album,img,ref
+          spotifyService.lookupArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums[i].artist,artistAlbumModelService.artistAlbumModel.artistAlbums[i].album,'',handler,i);
+        }
+      });
     },
     addArtistAlbum:function(ar,al) {
       if (artistAlbumModelService.containsArtistAlbum(ar,al)) {
@@ -176,16 +188,18 @@ angular.module('swl').factory('artistAlbumModelService',['linguaService','watchL
        statusService.add('error',linguaService._("Skipping duplicate, %1$s %2$s is already in the list",[ar,al]));
       } else  {
         artistAlbumModelService.artistAlbumModel.artistAlbums.push({"artist": ar, "album": al, "added": watchListService.dformat()});
-        artistAlbumModelService.populate();
-        watchListService.saveArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums);
-        statusService.add('info',linguaService._("Added %1$s - %2$s",[ar,al]));
+        watchListService.saveArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums, function() {
+          artistAlbumModelService.populate();
+          statusService.add('info',linguaService._("Added %1$s - %2$s",[ar,al]));
+        });
       }
     },
     rmArtistAlbum:function(idx) {
       artistAlbumModelService.artistAlbumModel.artistAlbums.splice(idx,1);
-      artistAlbumModelService.populate();
-      watchListService.saveArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums);
-      statusService.add('info',linguaService._("Removed"));
+      watchListService.saveArtistAlbums(artistAlbumModelService.artistAlbumModel.artistAlbums, function() {
+        artistAlbumModelService.populate();
+        statusService.add('info',linguaService._("Removed"));
+      });
     },
     containsArtistAlbum:function(ar,al) {
       var n = artistAlbumModelService.artistAlbumModel.artistAlbums;
@@ -214,43 +228,6 @@ angular.module('swl').factory('statusService',['$timeout',function($timeout) {
   return statusService;
 }]);
 
-angular.module('swl').factory('remoteCheckService',['linguaService','storeService','statusService','watchListService','$log',
-  function(linguaService,storeService,statusService,watchListService,$log) {
-  "use strict";
-  var remoteCheckService = {
-    checkForData:function() {
-      storeService.remote.getItem(function(data,err){
-        if (401 == err) {
-          statusService.add('error',linguaService._("Session expired, connect again: %s", err));
-        } else if (err) {
-          statusService.add('error',linguaService._("Path not found %s", err));
-        } else {
-          if (data) {
-            data = JSON.parse(data);
-            $log.log('remote data',data);
-            // compare remote updatedAt w local d.updatedAt - if remote newer update local
-            var remoteD = Date.parse(data.updatedAt);
-            $log.log('remote date',data.updatedAt,remoteD);
-            var localD = Date.parse(watchListService.getData().updatedAt);
-            if (isNaN(localD)) localD = 0;
-            $log.log('local date',localD);
-            if (remoteD > localD) {
-              $log.log('remote newer, updating');
-              //watchListService.data = data;
-              //watchListService.data.updatedAt = data.updatedAt;
-              //storeService.local.setItem('WL-data',angular.toJson(watchListService.data));
-              storeService.local.setItem('WL-data',angular.toJson(data));
-              // need some magic here to kick the bindings and update ui, we're out of angular scope here...
-            }
-          } else {
-            statusService.add('error',linguaService._("No data available"));
-          }
-        }
-      });
-    }
-  };
-  return remoteCheckService;
-}]);
 
 angular.module('swl').factory('lastFMOnSpotifyService',['lastFMService','spotifyService','swlSettings',
   function(lastFMService,spotifyService,swlSettings){

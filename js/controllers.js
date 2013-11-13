@@ -1,8 +1,9 @@
 
-angular.module('swl').controller('LastFMCtrl', ['$scope','lastFMOnSpotifyService','storeService','artistAlbumModelService',function LastFMCtrl($scope,lastFMOnSpotifyService,storeService,artistAlbumModelService) {
+angular.module('swl').controller('LastFMCtrl', ['$scope','lastFMOnSpotifyService','artistAlbumModelService',
+    function LastFMCtrl($scope,lastFMOnSpotifyService,artistAlbumModelService) {
     "use strict";
-    if (storeService.local.getItem('lastFMuserName')) {
-        $scope.lastFMuserName = storeService.local.getItem('lastFMuserName');
+    if (localStorage.getItem('lastFMuserName')) {
+        $scope.lastFMuserName = localStorage.getItem('lastFMuserName');
         lastFMOnSpotifyService.getSuggsOnSpot($scope.lastFMuserName,function(suggs, onSpot) {
             $scope.suggs = suggs;
             $scope.onSpot = onSpot;
@@ -10,7 +11,7 @@ angular.module('swl').controller('LastFMCtrl', ['$scope','lastFMOnSpotifyService
     }
 
     $scope.setLastFMuserName = function() {
-        storeService.local.setItem('lastFMuserName',$scope.lastFMuserName);
+        localStorage.setItem('lastFMuserName',$scope.lastFMuserName);
         lastFMOnSpotifyService.getSuggsOnSpot($scope.lastFMuserName,function(suggs, onSpot) {
             $scope.suggs = suggs;
             $scope.onSpot = onSpot;
@@ -40,6 +41,13 @@ angular.module('swl').controller('NewsCtrl',['$scope','artistNewsModelService',f
 
     $scope.addIgnore = function(href) {
         artistNewsModelService.addIgnore(href);
+        /*for (var i = 0; i < $scope.artistNewsModel.artistNewsFindings.length; i++) {
+            if ($scope.artistNewsModel.artistNewsFindings[i].href === href) {
+                $scope.artistNewsModel.artistNewsFindings.splice(i, 1);
+                $scope.artistNewsModel.artistNewsFindings[k-1]
+                break;
+            }
+        }*/
     };
 }]);
 
@@ -61,22 +69,32 @@ angular.module('swl').controller('AlbumsCtrl',['$scope', 'artistAlbumModelServic
     };
 }]);
 
-angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsService','watchListService','statusService',function SettingsCtrl($scope,$rootScope,rsService,watchListService,statusService){
+angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','watchListService','statusService','dropboxService',
+    function SettingsCtrl($scope,$rootScope,watchListService,statusService,dropboxService){
     "use strict";
     $scope.auth = function() {
         rsService.auth($scope.mUserAddress);
     };
 
+    $scope.dropboxAuth = function() {
+        dropboxService.sendAuth();
+    };
+
+    $scope.dbBtnTxt = dropboxService.isAuth() ? 'Connected' : 'Connect with Dropbox';
+
     // JSON.stringify will incl $$hashKey added by angular
-    $scope.exportData = angular.toJson(watchListService.getData());
+    watchListService.getData(function(data) {
+        $scope.exportData = angular.toJson(data);
+    });
 
     $scope.importData = function() {
         var o = $scope.mImport;
         try {
             o = JSON.parse(o);
-            watchListService.save(o);
-            $scope.mImport = '';
-            statusService.add('info',$scope._("import complete"));
+            watchListService.save(o,function() {
+                $scope.mImport = '';
+                statusService.add('info',$scope._("import complete"));
+            });
         } catch (err) {
             statusService.add('error',err.message);
         }
@@ -88,7 +106,8 @@ angular.module('swl').controller('SettingsCtrl',['$scope','$rootScope','rsServic
     });
 }]);
 
-angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService', function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
+angular.module('swl').controller('navCtrl', ['$scope', '$location', '$rootScope', 'spotifyService', 'artistNewsModelService',
+    function ($scope, $location, $rootScope, spotifyService,artistNewsModelService) {
     "use strict";
     $scope.isActive = function(route) {
         return route === $location.path();

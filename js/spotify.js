@@ -14,7 +14,7 @@ angular.module('spotify').factory('spotifyService', ['$http','$log',function($ht
         //$log.log('spotify memoize hit for '+artist+'_'+album);
         callback(spotifyService.aaMem[artist+'_'+album], artist, album,img,ref);
       } else {
-        $http.get('http://ws.spotify.com/search/1/album.json?q='+album.replace(/&/g,'%26')+'%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
+        $http.get('//ws.spotify.com/search/1/album.json?q='+album.replace(/&/g,'%26')+'%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
           var findings = [];
           if (data.info.num_results > 0) {
             for (var j = 0; j < data.albums.length; j++) {
@@ -35,6 +35,8 @@ angular.module('spotify').factory('spotifyService', ['$http','$log',function($ht
           }
           //$log.log(findings);
           callback(findings, aral.ar, aral.al,aral.img,ref);
+        }).error(function(data, status, headers, config) {
+          console.log('fail spotify',data);
         });
       }
     },
@@ -43,7 +45,7 @@ angular.module('spotify').factory('spotifyService', ['$http','$log',function($ht
         //$log.log('spotify memoize hit for '+artist);
         callback(spotifyService.newsMem[artist],i,ignoreReleaseList);
       } else {
-        $http.get('http://ws.spotify.com/search/1/album.json?q=tag:new%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
+        $http.get('//ws.spotify.com/search/1/album.json?q=tag:new%20AND%20artist:%22'+artist.replace(/&/g,'%26')+'%22').success(function(data) {
           var findings = [];
           if (data.info.num_results > 0) {
             for (var j = 0; j < data.albums.length; j++) {
@@ -69,7 +71,7 @@ angular.module('spotify').factory('spotifyService', ['$http','$log',function($ht
     },
     lookupArtist:function(uri, callback) {
       //$log.log('checking ' + uri);
-      $http.get('http://ws.spotify.com/lookup/1/.json?uri='+uri).success(function(data) {
+      $http.get('//ws.spotify.com/lookup/1/.json?uri='+uri).success(function(data) {
         //$log.log(data);
         if (data.artist) {
           callback(data.artist.name);

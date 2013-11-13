@@ -7,8 +7,8 @@ angular.module('lastfm').factory('lastFMService', ['$http','$q',function($http,$
     getNews: function(apiKey,un) {
       var findings = [];
       // $http returns a promise, which has a then function, which also returns a promise
-      var p1 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=1&user='+un+'&api_key='+apiKey);
-      var p2 = $http.get('http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=0&user='+un+'&api_key='+apiKey);
+      var p1 = $http.get('//ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=1&user='+un+'&api_key='+apiKey);
+      var p2 = $http.get('//ws.audioscrobbler.com/2.0/?method=user.getnewreleases&format=json&userecs=0&user='+un+'&api_key='+apiKey);
       var promise = $q.all([p1,p2]).then(function(d){
         // d will contain array of responses
         // The then function here is an opportunity to modify the response
@@ -24,7 +24,7 @@ angular.module('lastfm').factory('lastFMService', ['$http','$q',function($http,$
       return promise;
     },
     albumCover: function(apiKey,artist, album, callback,ref) {
-      $http.get('http://ws.audioscrobbler.com/2.0/?method=album.getInfo&format=json&artist='+artist.replace(/&/g,'%26')+'&album='+album.replace(/&/g,'%26')+'&api_key='+apiKey).success(function(data) {
+      $http.get('//ws.audioscrobbler.com/2.0/?method=album.getInfo&format=json&artist='+artist.replace(/&/g,'%26')+'&album='+album.replace(/&/g,'%26')+'&api_key='+apiKey).success(function(data) {
         var img = {};
         if (data.album && data.album.image[2]["#text"].length > 0) {
           img = data.album.image[2]["#text"];

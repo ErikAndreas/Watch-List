@@ -31,7 +31,6 @@ module.exports = function(grunt) {
           {expand:true, src: 'partials/*',dest: 'dist'},
           /*{expand:true, src: 'img/*',dest: 'dist'},*/
           {src: 'index.html',dest: 'dist/'},
-          {src: 'js/vendor/remoteStorage.js',dest:'dist/'},
           {src: 'l_*.json',dest: 'dist/'}
         ]
       }
@@ -66,7 +65,6 @@ module.exports = function(grunt) {
           {
             expand: true,
             src: ['img/*.png'],
-            // Could also match cwd line above. i.e. project-directory/img/
             dest: 'dist',
             ext: '.png'
           }
@@ -78,11 +76,8 @@ module.exports = function(grunt) {
         },
         files: [
           {
-            // Set to true to enable the following options…
             expand: true,
-            // cwd is 'current working directory'
             src: ['img/*.jpg'],
-            // Could also match cwd. i.e. project-directory/img/
             dest: 'dist',
             ext: '.jpg'
           }
@@ -104,23 +99,6 @@ module.exports = function(grunt) {
         src: ['translations/*.po'],
         dest: ''
       }
-    }
-  });
-
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-usemin');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-rev');
-  //grunt.loadNpmTasks('grunt-img');
-  grunt.loadNpmTasks('grunt-contrib-imagemin');
-  grunt.loadNpmTasks('grunt-lingua');
-
   /*
   grunt.registerMultiTask('lingua','tooling for lingua', function() {
     var po2json = require('po2json');
@@ -150,6 +128,22 @@ module.exports = function(grunt) {
       grunt.log.writeln('No such target');
     }
   });*/
+    }
+  });
+
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-usemin');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-rev');
+  grunt.loadNpmTasks('grunt-contrib-imagemin');
+  grunt.loadNpmTasks('grunt-lingua');
+
 
   grunt.registerTask('default', ['jshint', 'sass']);
   grunt.registerTask('dist', ['jshint','sass','clean:src','useminPrepare','concat','uglify','copy','cssmin','rev','usemin','imagemin']);
