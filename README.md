@@ -2,6 +2,8 @@ unhosted (being static html/js) web app for monitoring stuff on Spotify. Artist 
 
 Recently changed backing (backend) service from remoteStorage.io to Dropbox since (sadly) there are very few remoteStorage end user data storage providers as well as my need for an Android SDK for my WatchList poller, an Android app running background service polling this app's data and notifying findings. Will add poller source in separate repo later...
 
+Also, no longer using github pages for "hosting" the web app, Dropbox requires https so I got me a free SSL cert at StartSSL and hosting it on my own.
+
 * Install Node.js
 * Install ruby (for sass) and run ```gem install sass```
 
