@@ -1,11 +1,15 @@
 html {
   background: #eeeeee; }
 
+/*top menu breaks at 428px, make margin-top larger when < 427px */
 body {
   margin-top: 60px;
   color: #333333;
   text-shadow: 0px 1px 1px #FFFFFF; }
 
+@media all and (max-width: 427px) {
+  body {
+    margin-top: 100px; } }
 html, body {
   font-family: 'Lato', sans-serif; }
 

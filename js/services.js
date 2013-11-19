@@ -16,7 +16,7 @@ angular.module('swl').factory('watchListService',['dropboxService','$log',functi
         dropboxService.get(function(data) {
           if (data) {
             watchListService.data = data;
-            localStorage.setItem('WL-data', data);
+            localStorage.setItem('WL-data', JSON.stringify(data));
           }
           cb(watchListService.data);
         },function(error) {
