@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   "use strict";
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -6,17 +6,27 @@ module.exports = function(grunt) {
       files: ['Gruntfile.js', 'js/*.js'],
       options: {
         // options here to override JSHint defaults
-        browser: true,
-        globals: {
-          console: true,
-          angular: true,
-          remoteStorage: true
+        jshintrc: 'a.jshintrc'
+      }
+    },
+    jsbeautifier: {
+      modify: {
+        src: ['Gruntfile.js', 'js/*.js'],
+        options: {
+          config: 'a.jsbeautifyrc'
+        }
+      },
+      verify: {
+        src: ['Gruntfile.js', 'js/*.js'],
+        options: {
+          mode: 'VERIFY_ONLY',
+          config: 'a.jsbeautifyrc'
         }
       }
     },
     watch: {
-      files: ['<%= jshint.files %>','css/sass/*.scss'],
-      tasks: ['jshint','sass']
+      files: ['<%= jshint.files %>', 'css/sass/*.scss'],
+      tasks: ['jshint', 'sass']
     },
     sass: {
       dist: {
@@ -27,12 +37,17 @@ module.exports = function(grunt) {
     },
     copy: {
       dist: {
-        files: [
-          {expand:true, src: 'partials/*',dest: 'dist'},
-          /*{expand:true, src: 'img/*',dest: 'dist'},*/
-          {src: 'index.html',dest: 'dist/'},
-          {src: 'l_*.json',dest: 'dist/'}
-        ]
+        files: [{
+          expand: true,
+          src: 'partials/*',
+          dest: 'dist'
+        }, {
+          src: 'index.html',
+          dest: 'dist/'
+        }, {
+          src: 'l_*.json',
+          dest: 'dist/'
+        }]
       }
     },
     clean: {
@@ -44,7 +59,7 @@ module.exports = function(grunt) {
         dest: 'dist'
       }
     },
-    usemin:{
+    usemin: {
       html: ['dist/*.html'],
       css: ['dist/css/*.css'],
       options: {
@@ -61,27 +76,23 @@ module.exports = function(grunt) {
         options: {
           optimizationLevel: 7
         },
-        files: [
-          {
-            expand: true,
-            src: ['img/*.png'],
-            dest: 'dist',
-            ext: '.png'
-          }
-        ]
+        files: [{
+          expand: true,
+          src: ['img/*.png'],
+          dest: 'dist',
+          ext: '.png'
+        }]
       },
       jpg: {
         options: {
           progressive: true
         },
-        files: [
-          {
-            expand: true,
-            src: ['img/*.jpg'],
-            dest: 'dist',
-            ext: '.jpg'
-          }
-        ]
+        files: [{
+          expand: true,
+          src: ['img/*.jpg'],
+          dest: 'dist',
+          ext: '.jpg'
+        }]
       }
     },
     rev: {
@@ -99,39 +110,11 @@ module.exports = function(grunt) {
         src: ['translations/*.po'],
         dest: ''
       }
-  /*
-  grunt.registerMultiTask('lingua','tooling for lingua', function() {
-    var po2json = require('po2json');
-    var path = require('path');
-    if ('extract' === this.target) {
-      var args = 'extract -F babel.cfg -k _n:1,2 -k _ -o'.split(' ');
-      args.push(this.data.potDest);
-      args = args.concat(this.data.scanDirs);
-      var child = grunt.util.spawn({
-        cmd: 'pybabel',
-        args: args,
-        opts: { stdio: 'inherit', stderr: 'inherit' }
-      },this.async());
-    } else if ('po2json' === this.target) { // https://github.com/rkitamura/grunt-po2json
-      var prefix = this.data.outPrefix;
-      this.files.forEach(function(line) {
-        line.src.forEach(function(file) {
-          var data = po2json.parseSync(file);
-          var filename = path.basename(file, (path.extname(file)));
-          if (prefix) filename = prefix + filename;
-          var dest = path.join(line.dest, filename + '.json');
-          //grunt.file.write(dest, JSON.stringify(data));
-          grunt.log.writeln('File "' + dest + '" created.');
-        });
-      });
-    } else {
-      grunt.log.writeln('No such target');
-    }
-  });*/
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -144,7 +127,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-lingua');
 
-
-  grunt.registerTask('default', ['jshint', 'sass']);
-  grunt.registerTask('dist', ['jshint','sass','clean:src','useminPrepare','concat','uglify','copy','cssmin','rev','usemin','imagemin']);
+  grunt.registerTask('default', ['jsbeautifier:verify', 'jshint', 'sass']);
+  grunt.registerTask('cleanup', ['jsbeautifier:modify', 'jshint']);
+  grunt.registerTask('dist', ['jshint', 'sass', 'clean:src', 'useminPrepare', 'concat', 'uglify', 'copy', 'cssmin', 'rev', 'usemin', 'imagemin']);
 };
