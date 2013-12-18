@@ -110,6 +110,23 @@ module.exports = function (grunt) {
         src: ['translations/*.po'],
         dest: ''
       }
+    },
+    pagespeed: {
+      desktop: {
+        url: "https://nyhren.se/SWL",
+        locale: "en_US",
+        strategy: "desktop",
+        threshold: 80
+      },
+      mobile: {
+        url: "https://nyhren.se/SWL",
+        locale: "en_US",
+        strategy: "mobile",
+        threshold: 80
+      },
+      options: {
+        key: "your_key_here"
+      }
     }
   });
 
@@ -126,6 +143,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-rev');
   grunt.loadNpmTasks('grunt-contrib-imagemin');
   grunt.loadNpmTasks('grunt-lingua');
+  grunt.loadNpmTasks('grunt-pagespeed');
 
   grunt.registerTask('default', ['jsbeautifier:verify', 'jshint', 'sass']);
   grunt.registerTask('cleanup', ['jsbeautifier:modify', 'jshint']);

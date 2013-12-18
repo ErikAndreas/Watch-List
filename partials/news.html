@@ -7,6 +7,6 @@
 <div class="cleared"></div>
 <h3>Your list</h3>
 <ul class="list">
-	<li ng-repeat="artist in artistNewsModel.news"><img ng-src="{{artistNewsModel.imgs[$index]}}"/><span><span class="artistAlbum">{{artist.artist}}</span><br/>{{artist.added}}</span><a href="" ng-click="rm($index)">delete</a>
+	<li ng-repeat="artist in artistNewsModel.news"><img width="32" height="32" ng-src="{{artistNewsModel.imgs[$index]}}"/><span><span class="artistAlbum">{{artist.artist}}</span><br/>{{artist.added}}</span><a href="" ng-click="rm($index)">delete</a>
 	</li>
 </ul>
